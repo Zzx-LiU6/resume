@@ -1,7 +1,7 @@
 "use client"
 
 import type React from "react"
-import { useRef, useState } from "react"
+import { useRef, useState, useEffect } from "react"
 import { ChevronDown, ImageIcon, Plus, Trash2, Upload, X } from "lucide-react"
 import {
   type AwardItem,
@@ -197,6 +197,67 @@ export function EditPanel({
           [key]: (d[key] as { id: string }[]).map((x) => (x.id === id ? { ...x, ...patch } : x)),
         }) as ResumeData,
     )
+      // 草稿本地存储标识
+  const DRAFT_STORAGE_KEY = "resume_editor_draft"
+  // 自动保存定时器
+  const saveTimerRef = useRef<NodeJS.Timeout | null>(null)
+
+  // 手动保存草稿
+  const saveDraft = () => {
+    try {
+      window.localStorage.setItem(DRAFT_STORAGE_KEY, JSON.stringify(data))
+      alert(lang === "zh" ? "草稿已临时保存到浏览器本地" : "Draft saved locally")
+    } catch (err) {
+      console.error("保存草稿失败", err)
+      alert(lang === "zh" ? "保存失败，浏览器存储空间不足" : "Save failed, storage full")
+    }
+  }
+
+  // 读取本地草稿覆盖当前表单
+  const loadDraft = () => {
+    try {
+      const raw = window.localStorage.getItem(DRAFT_STORAGE_KEY)
+      if (!raw) {
+        alert(lang === "zh" ? "暂无本地草稿" : "No local draft found")
+        return
+      }
+      const draftData = JSON.parse(raw) as ResumeData
+      setData(draftData)
+      alert(lang === "zh" ? "已加载上次草稿内容" : "Draft loaded successfully")
+    } catch (err) {
+      console.error("读取草稿失败", err)
+    }
+  }
+
+  // 清除本地存储的草稿
+  const clearDraft = () => {
+    window.localStorage.removeItem(DRAFT_STORAGE_KEY)
+    alert(lang === "zh" ? "本地草稿已清除（页面内容不会清空）" : "Local draft cleared")
+  }
+
+  // 页面打开时检测是否有草稿
+  useEffect(() => {
+    const raw = window.localStorage.getItem(DRAFT_STORAGE_KEY)
+    if (raw) {
+      const confirmRestore = window.confirm(
+        lang === "zh"
+          ? "检测到上次未保存的草稿，是否直接恢复？"
+          : "Detect unsaved draft, restore now?"
+      )
+      if (confirmRestore) loadDraft()
+    }
+  }, [])
+
+  // 输入停止1秒自动缓存草稿（可选，不需要可删除整块useEffect）
+  useEffect(() => {
+    if (saveTimerRef.current) clearTimeout(saveTimerRef.current)
+    saveTimerRef.current = setTimeout(() => {
+      window.localStorage.setItem(DRAFT_STORAGE_KEY, JSON.stringify(data))
+    }, 1000)
+    return () => {
+      if (saveTimerRef.current) clearTimeout(saveTimerRef.current)
+    }
+  }, [data])
 
   const emptyRange = { start: "", end: "", untilNow: false }
 
@@ -548,10 +609,10 @@ function ExperienceSection({
           <EntryCard key={it.id} title={it.org || (lang === "zh" ? "新增经历" : "New Entry")}
            onDelete={() => onDelete(it.id)}>
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-              <Field label={lang === "zh" ? "公司" : orgLabel}>
+              <Field label={lang === "zh" ? "部门/社团" : orgLabel}>
                 <TextInput value={it.org} onChange={(e) => onPatch(it.id, { org: e.target.value })} />
               </Field>
-              <Field label={lang === "zh" ? "岗位" : "Position / Role"}>
+              <Field label={lang === "zh" ? "职位" : "Position / Role"}>
                 <TextInput value={it.role} onChange={(e) => onPatch(it.id, { role: e.target.value })} />
               </Field>
             </div>
