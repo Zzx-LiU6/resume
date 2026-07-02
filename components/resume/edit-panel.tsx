@@ -621,7 +621,7 @@ function ExperienceSection({
   title,
   hidden,
   items,
-  orgLabel = "Company",
+  orgLabel,
   onAdd,
   onDelete,
   onPatch,
@@ -636,6 +636,7 @@ function ExperienceSection({
   onPatch: (id: string, patch: Record<string, unknown>) => void
   lang: Lang
 }) {
+  const label = orgLabel ?? (lang === "zh" ? "公司" : "Company")
   return (
     <Accordion title={title} hidden={hidden}>
       <div className="flex flex-col gap-3">
@@ -643,7 +644,7 @@ function ExperienceSection({
           <EntryCard key={it.id} title={it.org || (lang === "zh" ? "新增经历" : "New Entry")}
             onDelete={() => onDelete(it.id)}>
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-              <Field label={orgLabel}>
+              <Field label={label}>
                 <TextInput value={it.org} onChange={(e) => onPatch(it.id, { org: e.target.value })} />
               </Field>
               <Field label={lang === "zh" ? "职位" : "Position / Role"}>
