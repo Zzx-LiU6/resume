@@ -39,17 +39,6 @@ export const MOCK_DATA: ResumeData = {
       gpa: "",
       courses: "",
     },
-    {
-      id: "edu2",
-      school: "",
-      major: "",
-      degree: "",
-      start: "",
-      end: "",
-      untilNow: false,
-      gpa: "",
-      courses: "",
-    },
   ],
   work: [
     {
@@ -58,7 +47,7 @@ export const MOCK_DATA: ResumeData = {
       role: "",
       start: "",
       end: "",
-      untilNow: true,
+      untilNow: false,
       bullets: [
         "",
         "",
