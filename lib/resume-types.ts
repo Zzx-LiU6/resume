@@ -212,12 +212,10 @@ export interface AwardItem {
   date: string
 }
 
-export type SkillLevel = "Master" | "Skilled" | "Basic"
-
 export interface SkillItem {
   id: string
   name: string
-  level: SkillLevel
+  desc: string
 }
 
 export interface ResumeData {
