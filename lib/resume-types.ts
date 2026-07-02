@@ -236,8 +236,6 @@ export interface SectionMeta {
   visible: boolean
 }
 
-export const SKILL_LEVELS: SkillLevel[] = ["Master", "Skilled", "Basic"]
-
 /** Bilingual section titles rendered on the resume. */
 export const SECTION_TITLES: Record<SectionType, { zh: string; en: string }> = {
   intro: { zh: "自我介绍", en: "Self Introduction" },
@@ -257,11 +255,6 @@ export const RESUME_LABELS = {
   gpa: { zh: "绩点", en: "GPA" },
   courses: { zh: "主修课程", en: "Courses" },
   skills: { zh: "相关技能", en: "Skills" },
-  levels: {
-    Master: { zh: "精通", en: "Master" },
-    Skilled: { zh: "熟练", en: "Skilled" },
-    Basic: { zh: "了解", en: "Basic" },
-  } as Record<SkillLevel, { zh: string; en: string }>,
 }
 
 export const sectionTitle = (t: SectionType, lang: Lang) => SECTION_TITLES[t][lang]
