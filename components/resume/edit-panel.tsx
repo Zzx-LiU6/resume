@@ -412,7 +412,7 @@ export function EditPanel({
               <Field label="Project Intro">
                 <TextArea value={p.intro} rows={2} onChange={(e) => patchIn("project", p.id, { intro: e.target.value })} />
               </Field>
-              <Field label="Related Skills">
+              <Field label="Project Outcomes">
                 <TextInput value={p.skills} onChange={(e) => patchIn("project", p.id, { skills: e.target.value })} />
               </Field>
             </EntryCard>
