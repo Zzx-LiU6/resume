@@ -202,22 +202,27 @@ export function EditPanel({
     <div className="flex flex-col gap-4">
       {/* Fixed personal info */}
       <div className="rounded-lg border border-border bg-card p-4">
-        <h2 className="mb-1 text-sm font-semibold text-foreground">个人信息 · Personal Info</h2>
+        <h2 className="mb-1 text-sm font-semibold text-foreground">
+  {lang === "zh" ? "个人信息" : "Personal Info"}
+</h2>
+<p className="mb-4 text-xs text-muted-foreground">
+  {lang === "zh" ? "固定于简历顶部，不可拖动或隐藏" : "Fixed at resume top, cannot drag or hide"}
+</p>
         <p className="mb-4 text-xs text-muted-foreground">固定于简历顶部，不可拖动或隐藏</p>
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-          <Field label="Full Name">
+          <Field label={lang === "zh" ? "姓名" : "Full Name"}>
             <TextInput
               value={data.personal.fullName}
               onChange={(e) => setData((d) => ({ ...d, personal: { ...d.personal, fullName: e.target.value } }))}
             />
           </Field>
-          <Field label="Gender">
+          <Field label={lang === "zh" ? "性别" : "Gender"}>
             <TextInput
               value={data.personal.gender}
               onChange={(e) => setData((d) => ({ ...d, personal: { ...d.personal, gender: e.target.value } }))}
             />
           </Field>
-          <Field label="Birth Date">
+          <Field label={lang === "zh" ? "出生日期" : "Birth Date"}>
             <input
               type="month"
               value={data.personal.birthDate}
@@ -225,25 +230,25 @@ export function EditPanel({
               className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm outline-none focus:border-ring focus:ring-2 focus:ring-ring/30"
             />
           </Field>
-          <Field label="Phone">
+          <Field label={lang === "zh" ? "电话" : "Phone"}>
             <TextInput
               value={data.personal.phone}
               onChange={(e) => setData((d) => ({ ...d, personal: { ...d.personal, phone: e.target.value } }))}
             />
           </Field>
-          <Field label="Email">
+          <Field label={lang === "zh" ? "邮箱" : "Email"}>
             <TextInput
               value={data.personal.email}
               onChange={(e) => setData((d) => ({ ...d, personal: { ...d.personal, email: e.target.value } }))}
             />
           </Field>
-          <Field label="City">
+          <Field label={lang === "zh" ? "现居城市" : "City"}>
             <TextInput
               value={data.personal.city}
               onChange={(e) => setData((d) => ({ ...d, personal: { ...d.personal, city: e.target.value } }))}
             />
           </Field>
-          <Field label="Job Intention" className="sm:col-span-2">
+          <Field label={lang === "zh" ? "求职意向" : "Job Intention"} className="sm:col-span-2">
             <TextInput
               value={data.personal.jobIntention}
               onChange={(e) => setData((d) => ({ ...d, personal: { ...d.personal, jobIntention: e.target.value } }))}
@@ -255,9 +260,9 @@ export function EditPanel({
         <div className="mt-4 border-t border-border pt-4">
           <label className="flex cursor-pointer items-center justify-between gap-2">
             <span className="flex items-center gap-2 text-sm font-medium text-foreground">
-              <ImageIcon className="h-4 w-4 text-muted-foreground" />
-              显示证件照 · ID Photo
-            </span>
+  <ImageIcon className="h-4 w-4 text-muted-foreground" />
+  {lang === "zh" ? "显示证件照" : "ID Photo"}
+</span>
             <span className="relative inline-flex">
               <input
                 type="checkbox"
