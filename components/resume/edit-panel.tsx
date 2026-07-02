@@ -13,8 +13,6 @@ import {
   type SectionMeta,
   type SectionType,
   type SkillItem,
-  type SkillLevel,
-  SKILL_LEVELS,
   uid,
 } from "@/lib/resume-types"
 import { Field, MonthRange, TextArea, TextInput } from "./fields"
@@ -457,32 +455,22 @@ export function EditPanel({
         <div className="flex flex-col gap-3">
           {data.skills.map((sk) => (
             <div key={sk.id} className="flex items-end gap-2">
-              <Field label={lang === "zh" ? "技能名称" : "Skill"} className="flex-1">
+              {/* flex-1 改为 flex-auto，输入框占满整行不留空白 */}
+              <Field label={lang === "zh" ? "技能名称" : "Skill"} className="flex-auto">
                 <TextInput value={sk.name} onChange={(e) => patchIn("skills", sk.id, { name: e.target.value })} />
-              </Field>
-              <Field label={lang === "zh" ? "熟练程度" : "Level"}>
-                <select
-                  value={sk.level}
-                  onChange={(e) => patchIn("skills", sk.id, { level: e.target.value as SkillLevel })}
-                  className="rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm outline-none focus:border-ring focus:ring-2 focus:ring-ring/30"
-                >
-                  {SKILL_LEVELS.map((l) => (
-                    <option key={l} value={l}>
-                      {l}
-                    </option>
-                  ))}
-                </select>
-              </Field>
-              <button
+
+                </Field>
+                {/* 熟练度组件已完整移除，只剩删除按钮 */}
+                <button
                 type="button"
                 onClick={() => removeFrom("skills", sk.id)}
                 className="mb-1 rounded p-2 text-muted-foreground hover:text-destructive"
                 aria-label="删除技能"
-              >
-                <Trash2 className="h-4 w-4" />
-              </button>
-            </div>
-          ))}
+                >
+                  <Trash2 className="h-4 w-4" />
+                  </button>
+                  </div>
+                ))}
           <AddButton
             label={lang === "zh" ? "添加技能" : "Add Skill"}
             onClick={() => addTo("skills", { id: uid(), name: "", level: "Skilled" } as SkillItem)}
