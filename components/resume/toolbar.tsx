@@ -1,7 +1,7 @@
 "use client"
 
-import { Columns2, Download, FileText, Rows2 } from "lucide-react"
-import { type ResumeTheme, type ThemeId, THEMES } from "@/lib/resume-types"
+import { Columns2, Download, FileText, Languages, Rows2, Type } from "lucide-react"
+import { type Lang, type ResumeTheme, type ThemeId, THEMES } from "@/lib/resume-types"
 import { cn } from "@/lib/utils"
 
 export type LayoutMode = "split" | "stacked"
@@ -11,17 +11,25 @@ export function Toolbar({
   onLayoutChange,
   themeId,
   onThemeChange,
+  lang,
+  onLangChange,
+  fontScale,
+  onFontScaleChange,
   onExport,
 }: {
   layout: LayoutMode
   onLayoutChange: (l: LayoutMode) => void
   themeId: ThemeId
   onThemeChange: (t: ThemeId) => void
+  lang: Lang
+  onLangChange: (l: Lang) => void
+  fontScale: number
+  onFontScaleChange: (v: number) => void
   onExport: () => void
 }) {
   return (
     <header className="no-print sticky top-0 z-30 border-b border-border bg-background/80 backdrop-blur-md">
-      <div className="mx-auto flex max-w-[1600px] flex-wrap items-center gap-3 px-4 py-3 sm:px-6">
+      <div className="mx-auto flex max-w-[1600px] flex-wrap items-center gap-x-4 gap-y-3 px-4 py-3 sm:px-6">
         <div className="flex items-center gap-2">
           <div className="flex h-8 w-8 items-center justify-center rounded-md bg-primary text-primary-foreground">
             <FileText className="h-4 w-4" />
@@ -32,15 +40,40 @@ export function Toolbar({
           </div>
         </div>
 
-        <div className="ml-auto flex flex-wrap items-center gap-2">
-          {/* Layout switch */}
-          <div className="flex items-center rounded-md border border-border p-0.5">
+        <div className="ml-auto flex flex-wrap items-center gap-x-3 gap-y-2">
+          {/* Resume layout switch */}
+          <div className="flex items-center rounded-md border border-border p-0.5" role="group" aria-label="简历布局">
             <ToggleBtn active={layout === "split"} onClick={() => onLayoutChange("split")} label="分栏">
               <Columns2 className="h-4 w-4" />
             </ToggleBtn>
-            <ToggleBtn active={layout === "stacked"} onClick={() => onLayoutChange("stacked")} label="上下">
+            <ToggleBtn active={layout === "stacked"} onClick={() => onLayoutChange("stacked")} label="单栏">
               <Rows2 className="h-4 w-4" />
             </ToggleBtn>
+          </div>
+
+          {/* Language switch */}
+          <div className="flex items-center rounded-md border border-border p-0.5" role="group" aria-label="标题语言">
+            <Languages className="ml-1.5 h-4 w-4 text-muted-foreground" />
+            <ToggleBtn active={lang === "zh"} onClick={() => onLangChange("zh")} label="中" alwaysLabel />
+            <ToggleBtn active={lang === "en"} onClick={() => onLangChange("en")} label="EN" alwaysLabel />
+          </div>
+
+          {/* Font size slider */}
+          <div className="flex items-center gap-2 rounded-md border border-border px-2.5 py-1.5">
+            <Type className="h-4 w-4 text-muted-foreground" />
+            <input
+              type="range"
+              min={0.8}
+              max={1.3}
+              step={0.05}
+              value={fontScale}
+              onChange={(e) => onFontScaleChange(Number(e.target.value))}
+              aria-label="字号缩放"
+              className="h-1.5 w-20 cursor-pointer accent-primary sm:w-24"
+            />
+            <span className="w-9 shrink-0 text-right text-xs tabular-nums text-muted-foreground">
+              {Math.round(fontScale * 100)}%
+            </span>
           </div>
 
           {/* Theme switch */}
@@ -65,12 +98,14 @@ function ToggleBtn({
   active,
   onClick,
   label,
+  alwaysLabel,
   children,
 }: {
   active: boolean
   onClick: () => void
   label: string
-  children: React.ReactNode
+  alwaysLabel?: boolean
+  children?: React.ReactNode
 }) {
   return (
     <button
@@ -83,7 +118,7 @@ function ToggleBtn({
       )}
     >
       {children}
-      <span className="hidden sm:inline">{label}</span>
+      <span className={cn(!alwaysLabel && "hidden sm:inline")}>{label}</span>
     </button>
   )
 }
@@ -96,7 +131,7 @@ function ThemeSwitcher({
   onThemeChange: (t: ThemeId) => void
 }) {
   return (
-    <div className="flex items-center gap-1 rounded-md border border-border px-1.5 py-1">
+    <div className="flex items-center gap-1 rounded-md border border-border px-1.5 py-1" role="group" aria-label="配色主题">
       {THEMES.map((t: ResumeTheme) => (
         <button
           key={t.id}
@@ -107,7 +142,7 @@ function ThemeSwitcher({
           aria-pressed={themeId === t.id}
           className={cn(
             "h-6 w-6 rounded-full border-2 transition-all",
-            themeId === t.id ? "scale-110 border-ring" : "border-transparent hover:scale-105",
+            themeId === t.id ? "scale-110 border-ring" : "border-border/50 hover:scale-105",
           )}
           style={{ background: t.swatch }}
         />

@@ -1,4 +1,14 @@
-export type ThemeId = "classic" | "blue" | "gray" | "dark"
+export type ThemeId =
+  | "classic"
+  | "blue"
+  | "gray"
+  | "dark"
+  | "mint"
+  | "coffee"
+  | "sky"
+  | "minimal"
+
+export type Lang = "zh" | "en"
 
 export type SectionType =
   | "intro"
@@ -91,6 +101,66 @@ export const THEMES: ResumeTheme[] = [
       tagInk: "#e2e8f0",
     },
   },
+  {
+    id: "mint",
+    name: "薄荷绿",
+    swatch: "#0d9488",
+    dark: false,
+    vars: {
+      paper: "#ffffff",
+      ink: "#134e4a",
+      subtle: "#5f8b86",
+      accent: "#0d9488",
+      line: "#0d9488",
+      tagBg: "#ecfdf5",
+      tagInk: "#0f766e",
+    },
+  },
+  {
+    id: "coffee",
+    name: "咖啡棕",
+    swatch: "#7c5230",
+    dark: false,
+    vars: {
+      paper: "#faf6f1",
+      ink: "#3f2d1e",
+      subtle: "#8a7360",
+      accent: "#7c5230",
+      line: "#c8a888",
+      tagBg: "#f1e7db",
+      tagInk: "#5b3d24",
+    },
+  },
+  {
+    id: "sky",
+    name: "天空蓝",
+    swatch: "#0284c7",
+    dark: false,
+    vars: {
+      paper: "#f8fbfe",
+      ink: "#0c344b",
+      subtle: "#5b7d92",
+      accent: "#0284c7",
+      line: "#7dd3fc",
+      tagBg: "#e0f2fe",
+      tagInk: "#075985",
+    },
+  },
+  {
+    id: "minimal",
+    name: "极简白",
+    swatch: "#e5e7eb",
+    dark: false,
+    vars: {
+      paper: "#ffffff",
+      ink: "#1f2937",
+      subtle: "#9ca3af",
+      accent: "#374151",
+      line: "#e5e7eb",
+      tagBg: "#f9fafb",
+      tagInk: "#4b5563",
+    },
+  },
 ]
 
 export interface PersonalInfo {
@@ -101,6 +171,8 @@ export interface PersonalInfo {
   email: string
   city: string
   jobIntention: string
+  /** Data URL of the uploaded ID photo (optional) */
+  photo: string
 }
 
 export interface DateRange {
@@ -163,11 +235,37 @@ export interface ResumeData {
 
 export interface SectionMeta {
   type: SectionType
-  /** Title rendered on the resume */
-  title: string
   visible: boolean
 }
 
 export const SKILL_LEVELS: SkillLevel[] = ["Master", "Skilled", "Basic"]
+
+/** Bilingual section titles rendered on the resume. */
+export const SECTION_TITLES: Record<SectionType, { zh: string; en: string }> = {
+  intro: { zh: "自我介绍", en: "Self Introduction" },
+  education: { zh: "教育背景", en: "Education" },
+  internship: { zh: "实习经历", en: "Internship Experience" },
+  work: { zh: "工作经历", en: "Work Experience" },
+  campus: { zh: "校园经历", en: "Campus Experience" },
+  project: { zh: "项目经历", en: "Project Experience" },
+  awards: { zh: "荣誉奖项", en: "Honors & Awards" },
+  skills: { zh: "专业技能", en: "Professional Skills" },
+  evaluation: { zh: "自我评价", en: "Self Evaluation" },
+}
+
+/** Bilingual inline labels used inside the resume body. */
+export const RESUME_LABELS = {
+  present: { zh: "至今", en: "Present" },
+  gpa: { zh: "绩点", en: "GPA" },
+  courses: { zh: "主修课程", en: "Courses" },
+  skills: { zh: "相关技能", en: "Skills" },
+  levels: {
+    Master: { zh: "精通", en: "Master" },
+    Skilled: { zh: "熟练", en: "Skilled" },
+    Basic: { zh: "了解", en: "Basic" },
+  } as Record<SkillLevel, { zh: string; en: string }>,
+}
+
+export const sectionTitle = (t: SectionType, lang: Lang) => SECTION_TITLES[t][lang]
 
 export const uid = () => Math.random().toString(36).slice(2, 10)

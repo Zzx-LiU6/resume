@@ -2,15 +2,17 @@
 
 import { useState } from "react"
 import { Eye, EyeOff, GripVertical } from "lucide-react"
-import type { SectionMeta, SectionType } from "@/lib/resume-types"
+import { type Lang, type SectionMeta, type SectionType, SECTION_TITLES } from "@/lib/resume-types"
 import { cn } from "@/lib/utils"
 
 export function SectionManager({
   sections,
+  lang,
   onReorder,
   onToggle,
 }: {
   sections: SectionMeta[]
+  lang: Lang
   onReorder: (from: number, to: number) => void
   onToggle: (type: SectionType) => void
 }) {
@@ -47,7 +49,12 @@ export function SectionManager({
           >
             <GripVertical className="h-4 w-4" />
           </button>
-          <span className="flex-1 truncate text-sm text-foreground">{s.title}</span>
+          <span className="flex-1 truncate text-sm text-foreground">
+            {SECTION_TITLES[s.type].zh}
+            {lang === "en" && (
+              <span className="ml-1.5 text-xs text-muted-foreground">{SECTION_TITLES[s.type].en}</span>
+            )}
+          </span>
           <button
             type="button"
             onClick={() => onToggle(s.type)}

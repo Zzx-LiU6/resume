@@ -1,15 +1,15 @@
 import type { ResumeData, SectionMeta } from "./resume-types"
 
 export const DEFAULT_SECTIONS: SectionMeta[] = [
-  { type: "intro", title: "Self Introduction", visible: true },
-  { type: "education", title: "Education", visible: true },
-  { type: "work", title: "Work Experience", visible: true },
-  { type: "internship", title: "Internship Experience", visible: true },
-  { type: "project", title: "Project Experience", visible: true },
-  { type: "campus", title: "Campus Experience", visible: true },
-  { type: "skills", title: "Professional Skills", visible: true },
-  { type: "awards", title: "Honors & Awards", visible: true },
-  { type: "evaluation", title: "Self Evaluation", visible: true },
+  { type: "intro", visible: true },
+  { type: "education", visible: true },
+  { type: "work", visible: true },
+  { type: "internship", visible: true },
+  { type: "project", visible: true },
+  { type: "campus", visible: true },
+  { type: "skills", visible: true },
+  { type: "awards", visible: true },
+  { type: "evaluation", visible: true },
 ]
 
 export const MOCK_DATA: ResumeData = {
@@ -21,6 +21,7 @@ export const MOCK_DATA: ResumeData = {
     email: "alex@example.com",
     city: "Shanghai",
     jobIntention: "Financial Risk Analyst",
+    photo: "",
   },
   intro:
     "Insurance & Risk Management graduate with a strong quantitative foundation and hands-on experience in financial data analysis, risk modeling, and statement review. Passionate about translating complex data into actionable risk insights. Holder of Korean TOPIK II certification with the ability to work in bilingual environments.",

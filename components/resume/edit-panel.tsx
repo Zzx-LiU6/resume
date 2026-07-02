@@ -1,12 +1,13 @@
 "use client"
 
 import type React from "react"
-import { useState } from "react"
-import { ChevronDown, Plus, Trash2, X } from "lucide-react"
+import { useRef, useState } from "react"
+import { ChevronDown, ImageIcon, Plus, Trash2, Upload, X } from "lucide-react"
 import {
   type AwardItem,
   type EducationItem,
   type ExperienceItem,
+  type Lang,
   type ProjectItem,
   type ResumeData,
   type SectionMeta,
@@ -154,16 +155,30 @@ export function EditPanel({
   data,
   setData,
   sections,
+  lang,
+  showPhoto,
+  onTogglePhoto,
   onReorder,
   onToggle,
 }: {
   data: ResumeData
   setData: SetData
   sections: SectionMeta[]
+  lang: Lang
+  showPhoto: boolean
+  onTogglePhoto: (v: boolean) => void
   onReorder: (from: number, to: number) => void
   onToggle: (type: SectionType) => void
 }) {
   const isHidden = (t: SectionType) => !sections.find((s) => s.type === t)?.visible
+  const fileRef = useRef<HTMLInputElement>(null)
+
+  const onPhotoFile = (file?: File) => {
+    if (!file) return
+    const reader = new FileReader()
+    reader.onload = () => setData((d) => ({ ...d, personal: { ...d.personal, photo: String(reader.result) } }))
+    reader.readAsDataURL(file)
+  }
 
   // ---- generic array helpers ----
   const addTo = <K extends keyof ResumeData>(key: K, item: ResumeData[K] extends Array<infer U> ? U : never) =>
@@ -235,13 +250,77 @@ export function EditPanel({
             />
           </Field>
         </div>
+
+        {/* ID photo toggle + upload */}
+        <div className="mt-4 border-t border-border pt-4">
+          <label className="flex cursor-pointer items-center justify-between gap-2">
+            <span className="flex items-center gap-2 text-sm font-medium text-foreground">
+              <ImageIcon className="h-4 w-4 text-muted-foreground" />
+              显示证件照 · ID Photo
+            </span>
+            <span className="relative inline-flex">
+              <input
+                type="checkbox"
+                checked={showPhoto}
+                onChange={(e) => onTogglePhoto(e.target.checked)}
+                className="peer sr-only"
+              />
+              <span className="h-5 w-9 rounded-full bg-muted transition-colors peer-checked:bg-primary" />
+              <span className="absolute left-0.5 top-0.5 h-4 w-4 rounded-full bg-background shadow transition-transform peer-checked:translate-x-4" />
+            </span>
+          </label>
+
+          {showPhoto && (
+            <div className="mt-3 flex items-center gap-3">
+              {data.personal.photo ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={data.personal.photo || "/placeholder.svg"}
+                  alt="证件照预览"
+                  className="h-16 w-[52px] shrink-0 rounded border border-border object-cover"
+                />
+              ) : (
+                <div className="flex h-16 w-[52px] shrink-0 items-center justify-center rounded border border-dashed border-border text-muted-foreground">
+                  <ImageIcon className="h-5 w-5" />
+                </div>
+              )}
+              <div className="flex flex-wrap gap-2">
+                <button
+                  type="button"
+                  onClick={() => fileRef.current?.click()}
+                  className="flex items-center gap-1.5 rounded-md border border-border px-3 py-1.5 text-xs font-medium text-foreground transition-colors hover:bg-muted"
+                >
+                  <Upload className="h-3.5 w-3.5" />
+                  上传照片
+                </button>
+                {data.personal.photo && (
+                  <button
+                    type="button"
+                    onClick={() => setData((d) => ({ ...d, personal: { ...d.personal, photo: "" } }))}
+                    className="flex items-center gap-1.5 rounded-md border border-border px-3 py-1.5 text-xs text-muted-foreground transition-colors hover:text-destructive"
+                  >
+                    <Trash2 className="h-3.5 w-3.5" />
+                    移除
+                  </button>
+                )}
+                <input
+                  ref={fileRef}
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={(e) => onPhotoFile(e.target.files?.[0])}
+                />
+              </div>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Section manager */}
       <div className="rounded-lg border border-border bg-card p-4">
         <h2 className="mb-1 text-sm font-semibold text-foreground">模块管理 · Sections</h2>
         <p className="mb-4 text-xs text-muted-foreground">拖动排序，点击眼睛图标显示 / 隐藏</p>
-        <SectionManager sections={sections} onReorder={onReorder} onToggle={onToggle} />
+        <SectionManager sections={sections} lang={lang} onReorder={onReorder} onToggle={onToggle} />
       </div>
 
       {/* Self Introduction */}
