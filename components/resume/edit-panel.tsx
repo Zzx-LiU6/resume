@@ -1,0 +1,480 @@
+"use client"
+
+import type React from "react"
+import { useState } from "react"
+import { ChevronDown, Plus, Trash2, X } from "lucide-react"
+import {
+  type AwardItem,
+  type EducationItem,
+  type ExperienceItem,
+  type ProjectItem,
+  type ResumeData,
+  type SectionMeta,
+  type SectionType,
+  type SkillItem,
+  type SkillLevel,
+  SKILL_LEVELS,
+  uid,
+} from "@/lib/resume-types"
+import { Field, MonthRange, TextArea, TextInput } from "./fields"
+import { SectionManager } from "./section-manager"
+import { cn } from "@/lib/utils"
+
+type SetData = React.Dispatch<React.SetStateAction<ResumeData>>
+
+function Accordion({
+  title,
+  hidden,
+  children,
+  defaultOpen,
+}: {
+  title: string
+  hidden?: boolean
+  children: React.ReactNode
+  defaultOpen?: boolean
+}) {
+  const [open, setOpen] = useState(defaultOpen ?? false)
+  return (
+    <div className="overflow-hidden rounded-lg border border-border bg-card">
+      <button
+        type="button"
+        onClick={() => setOpen((o) => !o)}
+        className="flex w-full items-center justify-between gap-2 px-4 py-3 text-left"
+      >
+        <span className="flex items-center gap-2 text-sm font-semibold text-foreground">
+          {title}
+          {hidden && (
+            <span className="rounded bg-muted px-1.5 py-0.5 text-[10px] font-normal text-muted-foreground">
+              已隐藏
+            </span>
+          )}
+        </span>
+        <ChevronDown className={cn("h-4 w-4 text-muted-foreground transition-transform", open && "rotate-180")} />
+      </button>
+      <div
+        className={cn(
+          "grid transition-all duration-300 ease-in-out",
+          open ? "grid-rows-[1fr]" : "grid-rows-[0fr]",
+        )}
+      >
+        <div className="overflow-hidden">
+          <div className="border-t border-border p-4">{children}</div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function EntryCard({
+  title,
+  onDelete,
+  children,
+}: {
+  title: string
+  onDelete: () => void
+  children: React.ReactNode
+}) {
+  return (
+    <div className="rounded-lg border border-border bg-background p-3">
+      <div className="mb-3 flex items-center justify-between">
+        <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">{title}</span>
+        <button
+          type="button"
+          onClick={onDelete}
+          className="flex items-center gap-1 rounded p-1 text-xs text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive"
+          aria-label="删除该条目"
+        >
+          <Trash2 className="h-3.5 w-3.5" />
+        </button>
+      </div>
+      <div className="flex flex-col gap-3">{children}</div>
+    </div>
+  )
+}
+
+function AddButton({ label, onClick }: { label: string; onClick: () => void }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className="flex w-full items-center justify-center gap-1.5 rounded-lg border border-dashed border-border py-2 text-sm text-muted-foreground transition-colors hover:border-ring hover:text-foreground"
+    >
+      <Plus className="h-4 w-4" />
+      {label}
+    </button>
+  )
+}
+
+/** Editable list of bullet points */
+function Bullets({
+  bullets,
+  onChange,
+}: {
+  bullets: string[]
+  onChange: (b: string[]) => void
+}) {
+  return (
+    <div className="flex flex-col gap-2">
+      <span className="text-xs font-medium text-muted-foreground">Job Description (bullets)</span>
+      {bullets.map((b, i) => (
+        <div key={i} className="flex items-start gap-2">
+          <span className="mt-2.5 h-1.5 w-1.5 shrink-0 rounded-full bg-muted-foreground" />
+          <TextArea
+            value={b}
+            rows={2}
+            onChange={(e) => {
+              const next = [...bullets]
+              next[i] = e.target.value
+              onChange(next)
+            }}
+            className="min-h-0"
+          />
+          <button
+            type="button"
+            onClick={() => onChange(bullets.filter((_, idx) => idx !== i))}
+            className="mt-1 rounded p-1 text-muted-foreground hover:text-destructive"
+            aria-label="删除该条描述"
+          >
+            <X className="h-3.5 w-3.5" />
+          </button>
+        </div>
+      ))}
+      <button
+        type="button"
+        onClick={() => onChange([...bullets, ""])}
+        className="flex w-fit items-center gap-1 text-xs text-muted-foreground hover:text-foreground"
+      >
+        <Plus className="h-3.5 w-3.5" /> 添加描述
+      </button>
+    </div>
+  )
+}
+
+export function EditPanel({
+  data,
+  setData,
+  sections,
+  onReorder,
+  onToggle,
+}: {
+  data: ResumeData
+  setData: SetData
+  sections: SectionMeta[]
+  onReorder: (from: number, to: number) => void
+  onToggle: (type: SectionType) => void
+}) {
+  const isHidden = (t: SectionType) => !sections.find((s) => s.type === t)?.visible
+
+  // ---- generic array helpers ----
+  const addTo = <K extends keyof ResumeData>(key: K, item: ResumeData[K] extends Array<infer U> ? U : never) =>
+    setData((d) => ({ ...d, [key]: [...(d[key] as unknown[]), item] }) as ResumeData)
+
+  const removeFrom = (key: keyof ResumeData, id: string) =>
+    setData((d) => ({ ...d, [key]: (d[key] as { id: string }[]).filter((x) => x.id !== id) }) as ResumeData)
+
+  const patchIn = (key: keyof ResumeData, id: string, patch: Record<string, unknown>) =>
+    setData(
+      (d) =>
+        ({
+          ...d,
+          [key]: (d[key] as { id: string }[]).map((x) => (x.id === id ? { ...x, ...patch } : x)),
+        }) as ResumeData,
+    )
+
+  const emptyRange = { start: "", end: "", untilNow: false }
+
+  return (
+    <div className="flex flex-col gap-4">
+      {/* Fixed personal info */}
+      <div className="rounded-lg border border-border bg-card p-4">
+        <h2 className="mb-1 text-sm font-semibold text-foreground">个人信息 · Personal Info</h2>
+        <p className="mb-4 text-xs text-muted-foreground">固定于简历顶部，不可拖动或隐藏</p>
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+          <Field label="Full Name">
+            <TextInput
+              value={data.personal.fullName}
+              onChange={(e) => setData((d) => ({ ...d, personal: { ...d.personal, fullName: e.target.value } }))}
+            />
+          </Field>
+          <Field label="Gender">
+            <TextInput
+              value={data.personal.gender}
+              onChange={(e) => setData((d) => ({ ...d, personal: { ...d.personal, gender: e.target.value } }))}
+            />
+          </Field>
+          <Field label="Birth Date">
+            <input
+              type="month"
+              value={data.personal.birthDate}
+              onChange={(e) => setData((d) => ({ ...d, personal: { ...d.personal, birthDate: e.target.value } }))}
+              className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm outline-none focus:border-ring focus:ring-2 focus:ring-ring/30"
+            />
+          </Field>
+          <Field label="Phone">
+            <TextInput
+              value={data.personal.phone}
+              onChange={(e) => setData((d) => ({ ...d, personal: { ...d.personal, phone: e.target.value } }))}
+            />
+          </Field>
+          <Field label="Email">
+            <TextInput
+              value={data.personal.email}
+              onChange={(e) => setData((d) => ({ ...d, personal: { ...d.personal, email: e.target.value } }))}
+            />
+          </Field>
+          <Field label="City">
+            <TextInput
+              value={data.personal.city}
+              onChange={(e) => setData((d) => ({ ...d, personal: { ...d.personal, city: e.target.value } }))}
+            />
+          </Field>
+          <Field label="Job Intention" className="sm:col-span-2">
+            <TextInput
+              value={data.personal.jobIntention}
+              onChange={(e) => setData((d) => ({ ...d, personal: { ...d.personal, jobIntention: e.target.value } }))}
+            />
+          </Field>
+        </div>
+      </div>
+
+      {/* Section manager */}
+      <div className="rounded-lg border border-border bg-card p-4">
+        <h2 className="mb-1 text-sm font-semibold text-foreground">模块管理 · Sections</h2>
+        <p className="mb-4 text-xs text-muted-foreground">拖动排序，点击眼睛图标显示 / 隐藏</p>
+        <SectionManager sections={sections} onReorder={onReorder} onToggle={onToggle} />
+      </div>
+
+      {/* Self Introduction */}
+      <Accordion title="Self Introduction · 自我介绍" hidden={isHidden("intro")}>
+        <TextArea
+          value={data.intro}
+          rows={5}
+          placeholder="写下你的自我介绍..."
+          onChange={(e) => setData((d) => ({ ...d, intro: e.target.value }))}
+        />
+      </Accordion>
+
+      {/* Education */}
+      <Accordion title="Education · 教育背景" hidden={isHidden("education")}>
+        <div className="flex flex-col gap-3">
+          {data.education.map((edu) => (
+            <EntryCard key={edu.id} title={edu.school || "New School"} onDelete={() => removeFrom("education", edu.id)}>
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                <Field label="School">
+                  <TextInput value={edu.school} onChange={(e) => patchIn("education", edu.id, { school: e.target.value })} />
+                </Field>
+                <Field label="Major">
+                  <TextInput value={edu.major} onChange={(e) => patchIn("education", edu.id, { major: e.target.value })} />
+                </Field>
+                <Field label="Degree">
+                  <TextInput value={edu.degree} onChange={(e) => patchIn("education", edu.id, { degree: e.target.value })} />
+                </Field>
+                <Field label="GPA">
+                  <TextInput value={edu.gpa} onChange={(e) => patchIn("education", edu.id, { gpa: e.target.value })} />
+                </Field>
+              </div>
+              <MonthRange value={edu} onChange={(v) => patchIn("education", edu.id, v)} />
+              <Field label="Major Courses">
+                <TextArea value={edu.courses} rows={2} onChange={(e) => patchIn("education", edu.id, { courses: e.target.value })} />
+              </Field>
+            </EntryCard>
+          ))}
+          <AddButton
+            label="添加教育经历"
+            onClick={() =>
+              addTo("education", {
+                id: uid(),
+                school: "",
+                major: "",
+                degree: "",
+                gpa: "",
+                courses: "",
+                ...emptyRange,
+              } as EducationItem)
+            }
+          />
+        </div>
+      </Accordion>
+
+      {/* Work */}
+      <ExperienceSection
+        title="Work Experience · 全职工作经历"
+        hidden={isHidden("work")}
+        items={data.work}
+        onAdd={() => addTo("work", { id: uid(), org: "", role: "", bullets: [""], ...emptyRange } as ExperienceItem)}
+        onDelete={(id) => removeFrom("work", id)}
+        onPatch={(id, p) => patchIn("work", id, p)}
+      />
+
+      {/* Internship */}
+      <ExperienceSection
+        title="Internship · 实习经历"
+        hidden={isHidden("internship")}
+        items={data.internship}
+        onAdd={() => addTo("internship", { id: uid(), org: "", role: "", bullets: [""], ...emptyRange } as ExperienceItem)}
+        onDelete={(id) => removeFrom("internship", id)}
+        onPatch={(id, p) => patchIn("internship", id, p)}
+      />
+
+      {/* Project */}
+      <Accordion title="Project Experience · 项目经历" hidden={isHidden("project")}>
+        <div className="flex flex-col gap-3">
+          {data.project.map((p) => (
+            <EntryCard key={p.id} title={p.name || "New Project"} onDelete={() => removeFrom("project", p.id)}>
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                <Field label="Project Name">
+                  <TextInput value={p.name} onChange={(e) => patchIn("project", p.id, { name: e.target.value })} />
+                </Field>
+                <Field label="Personal Role">
+                  <TextInput value={p.role} onChange={(e) => patchIn("project", p.id, { role: e.target.value })} />
+                </Field>
+              </div>
+              <MonthRange value={p} onChange={(v) => patchIn("project", p.id, v)} />
+              <Field label="Project Intro">
+                <TextArea value={p.intro} rows={2} onChange={(e) => patchIn("project", p.id, { intro: e.target.value })} />
+              </Field>
+              <Field label="Related Skills">
+                <TextInput value={p.skills} onChange={(e) => patchIn("project", p.id, { skills: e.target.value })} />
+              </Field>
+            </EntryCard>
+          ))}
+          <AddButton
+            label="添加项目经历"
+            onClick={() =>
+              addTo("project", { id: uid(), name: "", role: "", intro: "", skills: "", ...emptyRange } as ProjectItem)
+            }
+          />
+        </div>
+      </Accordion>
+
+      {/* Campus */}
+      <ExperienceSection
+        title="Campus Experience · 校园经历"
+        hidden={isHidden("campus")}
+        items={data.campus}
+        orgLabel="Activity / Club Name"
+        onAdd={() => addTo("campus", { id: uid(), org: "", role: "", bullets: [""], ...emptyRange } as ExperienceItem)}
+        onDelete={(id) => removeFrom("campus", id)}
+        onPatch={(id, p) => patchIn("campus", id, p)}
+      />
+
+      {/* Skills */}
+      <Accordion title="Professional Skills · 专业技能" hidden={isHidden("skills")}>
+        <div className="flex flex-col gap-3">
+          {data.skills.map((sk) => (
+            <div key={sk.id} className="flex items-end gap-2">
+              <Field label="Skill" className="flex-1">
+                <TextInput value={sk.name} onChange={(e) => patchIn("skills", sk.id, { name: e.target.value })} />
+              </Field>
+              <Field label="Level">
+                <select
+                  value={sk.level}
+                  onChange={(e) => patchIn("skills", sk.id, { level: e.target.value as SkillLevel })}
+                  className="rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm outline-none focus:border-ring focus:ring-2 focus:ring-ring/30"
+                >
+                  {SKILL_LEVELS.map((l) => (
+                    <option key={l} value={l}>
+                      {l}
+                    </option>
+                  ))}
+                </select>
+              </Field>
+              <button
+                type="button"
+                onClick={() => removeFrom("skills", sk.id)}
+                className="mb-1 rounded p-2 text-muted-foreground hover:text-destructive"
+                aria-label="删除技能"
+              >
+                <Trash2 className="h-4 w-4" />
+              </button>
+            </div>
+          ))}
+          <AddButton
+            label="添加技能"
+            onClick={() => addTo("skills", { id: uid(), name: "", level: "Skilled" } as SkillItem)}
+          />
+        </div>
+      </Accordion>
+
+      {/* Awards */}
+      <Accordion title="Honors & Awards · 荣誉奖项" hidden={isHidden("awards")}>
+        <div className="flex flex-col gap-3">
+          {data.awards.map((a) => (
+            <EntryCard key={a.id} title={a.name || "New Award"} onDelete={() => removeFrom("awards", a.id)}>
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                <Field label="Award Name">
+                  <TextInput value={a.name} onChange={(e) => patchIn("awards", a.id, { name: e.target.value })} />
+                </Field>
+                <Field label="Issuer">
+                  <TextInput value={a.issuer} onChange={(e) => patchIn("awards", a.id, { issuer: e.target.value })} />
+                </Field>
+                <Field label="Award Date">
+                  <input
+                    type="month"
+                    value={a.date}
+                    onChange={(e) => patchIn("awards", a.id, { date: e.target.value })}
+                    className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm outline-none focus:border-ring focus:ring-2 focus:ring-ring/30"
+                  />
+                </Field>
+              </div>
+            </EntryCard>
+          ))}
+          <AddButton
+            label="添加荣誉奖项"
+            onClick={() => addTo("awards", { id: uid(), name: "", issuer: "", date: "" } as AwardItem)}
+          />
+        </div>
+      </Accordion>
+
+      {/* Self Evaluation */}
+      <Accordion title="Self Evaluation · 自我评价" hidden={isHidden("evaluation")}>
+        <TextArea
+          value={data.evaluation}
+          rows={5}
+          placeholder="写下你的自我评价..."
+          onChange={(e) => setData((d) => ({ ...d, evaluation: e.target.value }))}
+        />
+      </Accordion>
+    </div>
+  )
+}
+
+function ExperienceSection({
+  title,
+  hidden,
+  items,
+  orgLabel = "Company",
+  onAdd,
+  onDelete,
+  onPatch,
+}: {
+  title: string
+  hidden?: boolean
+  items: ExperienceItem[]
+  orgLabel?: string
+  onAdd: () => void
+  onDelete: (id: string) => void
+  onPatch: (id: string, patch: Record<string, unknown>) => void
+}) {
+  return (
+    <Accordion title={title} hidden={hidden}>
+      <div className="flex flex-col gap-3">
+        {items.map((it) => (
+          <EntryCard key={it.id} title={it.org || "New Entry"} onDelete={() => onDelete(it.id)}>
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+              <Field label={orgLabel}>
+                <TextInput value={it.org} onChange={(e) => onPatch(it.id, { org: e.target.value })} />
+              </Field>
+              <Field label="Position / Role">
+                <TextInput value={it.role} onChange={(e) => onPatch(it.id, { role: e.target.value })} />
+              </Field>
+            </div>
+            <MonthRange value={it} onChange={(v) => onPatch(it.id, v)} />
+            <Bullets bullets={it.bullets} onChange={(b) => onPatch(it.id, { bullets: b })} />
+          </EntryCard>
+        ))}
+        <AddButton label="添加条目" onClick={onAdd} />
+      </div>
+    </Accordion>
+  )
+}
