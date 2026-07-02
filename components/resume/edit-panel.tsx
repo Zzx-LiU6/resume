@@ -110,13 +110,17 @@ function AddButton({ label, onClick }: { label: string; onClick: () => void }) {
 function Bullets({
   bullets,
   onChange,
+  lang,
 }: {
   bullets: string[]
   onChange: (b: string[]) => void
+  lang: Lang
 }) {
   return (
     <div className="flex flex-col gap-2">
-      <span className="text-xs font-medium text-muted-foreground">Job Description (bullets)</span>
+      <span className="text-xs font-medium text-muted-foreground">
+  {lang === "zh" ? "工作内容" : "Job Description (bullets)"}
+</span>
       {bullets.map((b, i) => (
         <div key={i} className="flex items-start gap-2">
           <span className="mt-2.5 h-1.5 w-1.5 shrink-0 rounded-full bg-muted-foreground" />
@@ -145,7 +149,7 @@ function Bullets({
         onClick={() => onChange([...bullets, ""])}
         className="flex w-fit items-center gap-1 text-xs text-muted-foreground hover:text-foreground"
       >
-        <Plus className="h-3.5 w-3.5" /> 添加描述
+        <Plus className="h-3.5 w-3.5" /> {lang === "zh" ? "添加描述" : "Add bullet"}
       </button>
     </div>
   )
@@ -322,8 +326,12 @@ export function EditPanel({
 
       {/* Section manager */}
       <div className="rounded-lg border border-border bg-card p-4">
-        <h2 className="mb-1 text-sm font-semibold text-foreground">模块管理 · Sections</h2>
-        <p className="mb-4 text-xs text-muted-foreground">拖动排序，点击眼睛图标显示 / 隐藏</p>
+        <h2 className="mb-1 text-sm font-semibold text-foreground">
+  {lang === "zh" ? "模块管理" : "Sections"}
+</h2>
+        <p className="mb-4 text-xs text-muted-foreground">
+  {lang === "zh" ? "拖动排序，点击眼睛图标显示 / 隐藏" : "Drag to reorder, click eye icon to show/hide"}
+</p>
         <SectionManager sections={sections} lang={lang} onReorder={onReorder} onToggle={onToggle} />
       </div>
 
@@ -332,7 +340,7 @@ export function EditPanel({
         <TextArea
           value={data.intro}
           rows={5}
-          placeholder="写下你的自我介绍..."
+          placeholder={lang === "zh" ? "写下你的自我介绍..." : "Write your self introduction..."}
           onChange={(e) => setData((d) => ({ ...d, intro: e.target.value }))}
         />
       </Accordion>
@@ -341,7 +349,7 @@ export function EditPanel({
       <Accordion title={lang === "zh" ? "教育背景" : "Education"} hidden={isHidden("education")}>
         <div className="flex flex-col gap-3">
           {data.education.map((edu) => (
-            <EntryCard key={edu.id} title={edu.school || "New School"} onDelete={() => removeFrom("education", edu.id)}>
+            <EntryCard key={edu.id} title={edu.school || (lang === "zh" ? "新增院校" : "New School")}onDelete={() => removeFrom("education", edu.id)}>
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                 <Field label={lang === "zh" ? "学校" : "School"}>
                   <TextInput value={edu.school} onChange={(e) => patchIn("education", edu.id, { school: e.target.value })} />
@@ -363,7 +371,7 @@ export function EditPanel({
             </EntryCard>
           ))}
           <AddButton
-            label="添加教育经历"
+            label={lang === "zh" ? "添加教育经历" : "Add Education"}
             onClick={() =>
               addTo("education", {
                 id: uid(),
@@ -381,6 +389,7 @@ export function EditPanel({
 
       {/* Work */}
       <ExperienceSection
+      lang={lang}
         title={lang === "zh" ? "工作经历" : "Work Experience"}
         hidden={isHidden("work")}
         items={data.work}
@@ -391,7 +400,8 @@ export function EditPanel({
 
       {/* Internship */}
       <ExperienceSection
-        title={lang === "zh" ? "实习经历" : "Internship"}
+      lang={lang}
+        title={lang === "zh" ? "实习经历" : "Internship Experience"}
         hidden={isHidden("internship")}
         items={data.internship}
         onAdd={() => addTo("internship", { id: uid(), org: "", role: "", bullets: [""], ...emptyRange } as ExperienceItem)}
@@ -403,7 +413,7 @@ export function EditPanel({
       <Accordion title={lang === "zh" ? "项目经历" : "Project Experience"} hidden={isHidden("project")}>
         <div className="flex flex-col gap-3">
           {data.project.map((p) => (
-            <EntryCard key={p.id} title={p.name || "New Project"} onDelete={() => removeFrom("project", p.id)}>
+            <EntryCard key={p.id} title={p.name || (lang === "zh" ? "新增项目" : "New Project")} onDelete={() => removeFrom("project", p.id)}>
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                 <Field label={lang === "zh" ? "项目名称" : "Project Name"}>
                   <TextInput value={p.name} onChange={(e) => patchIn("project", p.id, { name: e.target.value })} />
@@ -422,7 +432,7 @@ export function EditPanel({
             </EntryCard>
           ))}
           <AddButton
-            label="添加项目经历"
+            label={lang === "zh" ? "添加项目经历" : "Add Project"}
             onClick={() =>
               addTo("project", { id: uid(), name: "", role: "", intro: "", skills: "", ...emptyRange } as ProjectItem)
             }
@@ -432,24 +442,25 @@ export function EditPanel({
 
       {/* Campus */}
       <ExperienceSection
+      lang={lang}
         title={lang === "zh" ? "校园经历" : "Campus Experience"}
         hidden={isHidden("campus")}
-        itemorgLabel={lang === "zh" ? "组织/社团名称" : "Activity / Club Name"}s={data.campus}
-        orgLabel="Activity / Club Name"
+        items={data.campus}
+        orgLabel={lang === "zh" ? "部门/社团名称" : "Activity / Club Name"}
         onAdd={() => addTo("campus", { id: uid(), org: "", role: "", bullets: [""], ...emptyRange } as ExperienceItem)}
         onDelete={(id) => removeFrom("campus", id)}
         onPatch={(id, p) => patchIn("campus", id, p)}
       />
 
       {/* Skills */}
-      <Accordion title="Professional Skills · 专业技能" hidden={isHidden("skills")}>
+      <Accordion title={lang === "zh" ? "专业技能" : "Professional Skills"} hidden={isHidden("skills")}>
         <div className="flex flex-col gap-3">
           {data.skills.map((sk) => (
             <div key={sk.id} className="flex items-end gap-2">
-              <Field label="Skill" className="flex-1">
+              <Field label={lang === "zh" ? "技能名称" : "Skill"} className="flex-1">
                 <TextInput value={sk.name} onChange={(e) => patchIn("skills", sk.id, { name: e.target.value })} />
               </Field>
-              <Field label="Level">
+              <Field label={lang === "zh" ? "熟练程度" : "Level"}>
                 <select
                   value={sk.level}
                   onChange={(e) => patchIn("skills", sk.id, { level: e.target.value as SkillLevel })}
@@ -473,25 +484,26 @@ export function EditPanel({
             </div>
           ))}
           <AddButton
-            label="添加技能"
+            label={lang === "zh" ? "添加技能" : "Add Skill"}
             onClick={() => addTo("skills", { id: uid(), name: "", level: "Skilled" } as SkillItem)}
           />
         </div>
       </Accordion>
 
       {/* Awards */}
-      <Accordion title="Honors & Awards · 荣誉奖项" hidden={isHidden("awards")}>
+      <Accordion title={lang === "zh" ? "荣誉奖项" : "Honors & Awards"} hidden={isHidden("awards")}>
         <div className="flex flex-col gap-3">
           {data.awards.map((a) => (
-            <EntryCard key={a.id} title={a.name || "New Award"} onDelete={() => removeFrom("awards", a.id)}>
+            <EntryCard key={a.id} title={a.name || (lang === "zh" ? "新增奖项" : "New Award")}
+            onDelete={() => removeFrom("awards", a.id)}>
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                <Field label="Award Name">
+                <Field label={lang === "zh" ? "奖项名称" : "Award Name"}>
                   <TextInput value={a.name} onChange={(e) => patchIn("awards", a.id, { name: e.target.value })} />
                 </Field>
-                <Field label="Issuer">
+                <Field label={lang === "zh" ? "颁发机构" : "Issuer"}>
                   <TextInput value={a.issuer} onChange={(e) => patchIn("awards", a.id, { issuer: e.target.value })} />
                 </Field>
-                <Field label="Award Date">
+                <Field label={lang === "zh" ? "获奖时间" : "Award Date"}>
                   <input
                     type="month"
                     value={a.date}
@@ -503,18 +515,18 @@ export function EditPanel({
             </EntryCard>
           ))}
           <AddButton
-            label="添加荣誉奖项"
+            label={lang === "zh" ? "添加荣誉奖项" : "Add Award"}
             onClick={() => addTo("awards", { id: uid(), name: "", issuer: "", date: "" } as AwardItem)}
           />
         </div>
       </Accordion>
 
       {/* Self Evaluation */}
-      <Accordion title="Self Evaluation · 自我评价" hidden={isHidden("evaluation")}>
+      <Accordion title={lang === "zh" ? "自我评价" : "Self Evaluation"} hidden={isHidden("evaluation")}>
         <TextArea
           value={data.evaluation}
           rows={5}
-          placeholder="写下你的自我评价..."
+          placeholder={lang === "zh" ? "写下你的自我评价..." : "Write your self evaluation..."}
           onChange={(e) => setData((d) => ({ ...d, evaluation: e.target.value }))}
         />
       </Accordion>
@@ -530,6 +542,7 @@ function ExperienceSection({
   onAdd,
   onDelete,
   onPatch,
+  lang,
 }: {
   title: string
   hidden?: boolean
@@ -538,25 +551,27 @@ function ExperienceSection({
   onAdd: () => void
   onDelete: (id: string) => void
   onPatch: (id: string, patch: Record<string, unknown>) => void
+  lang: Lang
 }) {
   return (
     <Accordion title={title} hidden={hidden}>
       <div className="flex flex-col gap-3">
         {items.map((it) => (
-          <EntryCard key={it.id} title={it.org || "New Entry"} onDelete={() => onDelete(it.id)}>
+          <EntryCard key={it.id} title={it.org || (lang === "zh" ? "新增经历" : "New Entry")}
+           onDelete={() => onDelete(it.id)}>
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-              <Field label={orgLabel}>
+              <Field label={lang === "zh" ? "公司" : orgLabel}>
                 <TextInput value={it.org} onChange={(e) => onPatch(it.id, { org: e.target.value })} />
               </Field>
-              <Field label="Position / Role">
+              <Field label={lang === "zh" ? "岗位" : "Position / Role"}>
                 <TextInput value={it.role} onChange={(e) => onPatch(it.id, { role: e.target.value })} />
               </Field>
             </div>
             <MonthRange value={it} onChange={(v) => onPatch(it.id, v)} />
-            <Bullets bullets={it.bullets} onChange={(b) => onPatch(it.id, { bullets: b })} />
+            <Bullets bullets={it.bullets} onChange={(b) => onPatch(it.id, { bullets: b })} lang={lang} />
           </EntryCard>
         ))}
-        <AddButton label="添加条目" onClick={onAdd} />
+        <AddButton label={lang === "zh" ? "添加条目" : "Add Entry"} onClick={onAdd} />
       </div>
     </Accordion>
   )

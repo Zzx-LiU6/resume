@@ -79,7 +79,7 @@ export const MOCK_DATA: ResumeData = {
       untilNow: false,
       intro:
         "",
-      outcomes: "",
+      skills: "",
     },
   ],
   campus: [
