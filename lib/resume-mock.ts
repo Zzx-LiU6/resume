@@ -121,12 +121,5 @@ export const MOCK_DATA: ResumeData = {
       date: "",
     },
   ],
-  skills: [
-    { id: "sk1", name: "技能名称", level: "精通/熟练/良好" }
-    { id: "sk2", name: "SQL", level: "Skilled" },
-    { id: "sk3", name: "Excel", level: "Master" },
-    { id: "sk4", name: "Risk Modeling", level: "Skilled" },
-    { id: "sk5", name: "Financial Statement Analysis", level: "Skilled" },
-    { id: "sk6", name: "Korean TOPIK II", level: "Basic" },
-  ],
+  skills: [],
 }
