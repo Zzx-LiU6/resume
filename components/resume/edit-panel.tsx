@@ -328,7 +328,7 @@ export function EditPanel({
       </div>
 
       {/* Self Introduction */}
-      <Accordion title={lang === "zh" ? "自我介绍" : "Self Introduction"} hidden={isHidden("intro")}>
+      <Accordion title="Self Introduction · 自我介绍" hidden={isHidden("intro")}>
         <TextArea
           value={data.intro}
           rows={5}
@@ -338,18 +338,18 @@ export function EditPanel({
       </Accordion>
 
       {/* Education */}
-      <Accordion title={lang === "zh" ? "教育背景" : "Education"} hidden={isHidden("education")}>
+      <Accordion title="Education · 教育背景" hidden={isHidden("education")}>
         <div className="flex flex-col gap-3">
           {data.education.map((edu) => (
             <EntryCard key={edu.id} title={edu.school || "New School"} onDelete={() => removeFrom("education", edu.id)}>
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                <Field label={lang === "zh" ? "学校" : "School"}>
+                <Field label="School">
                   <TextInput value={edu.school} onChange={(e) => patchIn("education", edu.id, { school: e.target.value })} />
                 </Field>
-                <Field label={lang === "zh" ? "专业" : "Major"}>
+                <Field label="Major">
                   <TextInput value={edu.major} onChange={(e) => patchIn("education", edu.id, { major: e.target.value })} />
                 </Field>
-                <Field label={lang === "zh" ? "学位" : "Degree"}>
+                <Field label="Degree">
                   <TextInput value={edu.degree} onChange={(e) => patchIn("education", edu.id, { degree: e.target.value })} />
                 </Field>
                 <Field label="GPA">
@@ -357,7 +357,7 @@ export function EditPanel({
                 </Field>
               </div>
               <MonthRange value={edu} onChange={(v) => patchIn("education", edu.id, v)} />
-              <Field label={lang === "zh" ? "主修课程" : "Major Courses"}>
+              <Field label="Major Courses">
                 <TextArea value={edu.courses} rows={2} onChange={(e) => patchIn("education", edu.id, { courses: e.target.value })} />
               </Field>
             </EntryCard>
@@ -381,7 +381,7 @@ export function EditPanel({
 
       {/* Work */}
       <ExperienceSection
-        title={lang === "zh" ? "工作经历" : "Work Experience"}
+        title="Work Experience · 全职工作经历"
         hidden={isHidden("work")}
         items={data.work}
         onAdd={() => addTo("work", { id: uid(), org: "", role: "", bullets: [""], ...emptyRange } as ExperienceItem)}
@@ -391,7 +391,7 @@ export function EditPanel({
 
       {/* Internship */}
       <ExperienceSection
-        title={lang === "zh" ? "实习经历" : "Internship"}
+        title="Internship · 实习经历"
         hidden={isHidden("internship")}
         items={data.internship}
         onAdd={() => addTo("internship", { id: uid(), org: "", role: "", bullets: [""], ...emptyRange } as ExperienceItem)}
@@ -400,23 +400,23 @@ export function EditPanel({
       />
 
       {/* Project */}
-      <Accordion title={lang === "zh" ? "项目经历" : "Project Experience"} hidden={isHidden("project")}>
+      <Accordion title="Project Experience · 项目经历" hidden={isHidden("project")}>
         <div className="flex flex-col gap-3">
           {data.project.map((p) => (
             <EntryCard key={p.id} title={p.name || "New Project"} onDelete={() => removeFrom("project", p.id)}>
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                <Field label={lang === "zh" ? "项目名称" : "Project Name"}>
+                <Field label="Project Name">
                   <TextInput value={p.name} onChange={(e) => patchIn("project", p.id, { name: e.target.value })} />
                 </Field>
-                <Field label={lang === "zh" ? "个人角色" : "Personal Role"}>
+                <Field label="Personal Role">
                   <TextInput value={p.role} onChange={(e) => patchIn("project", p.id, { role: e.target.value })} />
                 </Field>
               </div>
               <MonthRange value={p} onChange={(v) => patchIn("project", p.id, v)} />
-              <Field label={lang === "zh" ? "项目简介" : "Project Intro"}>
+              <Field label="Project Intro">
                 <TextArea value={p.intro} rows={2} onChange={(e) => patchIn("project", p.id, { intro: e.target.value })} />
               </Field>
-              <Field label={lang === "zh" ? "项目成果" : "Project Outcomes"}>
+              <Field label="Project Outcomes">
                 <TextInput value={p.skills} onChange={(e) => patchIn("project", p.id, { skills: e.target.value })} />
               </Field>
             </EntryCard>
@@ -432,9 +432,9 @@ export function EditPanel({
 
       {/* Campus */}
       <ExperienceSection
-        title={lang === "zh" ? "校园经历" : "Campus Experience"}
+        title="Campus Experience · 校园经历"
         hidden={isHidden("campus")}
-        itemorgLabel={lang === "zh" ? "组织/社团名称" : "Activity / Club Name"}s={data.campus}
+        items={data.campus}
         orgLabel="Activity / Club Name"
         onAdd={() => addTo("campus", { id: uid(), org: "", role: "", bullets: [""], ...emptyRange } as ExperienceItem)}
         onDelete={(id) => removeFrom("campus", id)}
