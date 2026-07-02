@@ -255,8 +255,12 @@ export function ResumePreview({
                   className="rounded px-2 py-1 font-medium"
                   style={{ fontSize: "0.6875em", background: "var(--tag-bg)", color: "var(--tag-ink)" }}
                 >
-                  {s.name}
-                  <span style={{ color: "var(--subtle)" }}> · {RESUME_LABELS.levels[s.level][lang]}</span>
+                  <div>{s.name}</div>
+                  {s.desc && (
+                    <p style={{ color: "var(--subtle)", fontSize: "0.85em", marginTop: "4px" }}>
+                      {s.desc}
+                      </p>
+                    )}
                 </span>
               ))}
             </div>
