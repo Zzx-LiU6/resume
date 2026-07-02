@@ -208,7 +208,6 @@ export function EditPanel({
 <p className="mb-4 text-xs text-muted-foreground">
   {lang === "zh" ? "固定于简历顶部，不可拖动或隐藏" : "Fixed at resume top, cannot drag or hide"}
 </p>
-        <p className="mb-4 text-xs text-muted-foreground">固定于简历顶部，不可拖动或隐藏</p>
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           <Field label={lang === "zh" ? "姓名" : "Full Name"}>
             <TextInput
