@@ -538,31 +538,40 @@ export function EditPanel({
 
       {/* Skills */}
       <Accordion title={lang === "zh" ? "专业技能" : "Professional Skills"} hidden={isHidden("skills")}>
-        <div className="flex flex-col gap-3">
-          {data.skills.map((sk) => (
-            <div key={sk.id} className="flex items-end gap-2">
-              {/* flex-1 改为 flex-auto，输入框占满整行不留空白 */}
-              <Field label={lang === "zh" ? "技能名称" : "Skill"} className="flex-auto">
-                <TextInput value={sk.name} onChange={(e) => patchIn("skills", sk.id, { name: e.target.value })} />
-
-              </Field>
-              {/* 熟练度组件已完整移除，只剩删除按钮 */}
-              <button
-                type="button"
-                onClick={() => removeFrom("skills", sk.id)}
-                className="mb-1 rounded p-2 text-muted-foreground hover:text-destructive"
-                aria-label="删除技能"
-              >
-                <Trash2 className="h-4 w-4" />
-              </button>
-            </div>
-          ))}
-          <AddButton
-            label={lang === "zh" ? "添加技能" : "Add Skill"}
-            onClick={() => addTo("skills", { id: uid(), name: "", level: "Skilled" } as SkillItem)}
+  <div className="flex flex-col gap-3">
+    {data.skills.map((sk) => (
+      <EntryCard
+        key={sk.id}
+        title={sk.name || (lang === "zh" ? "技能/证书" : "Skill / Cert")}
+        onDelete={() => removeFrom("skills", sk.id)}
+      >
+        <Field label={lang === "zh" ? "名称" : "Name"}>
+          <TextInput
+            value={sk.name}
+            onChange={(e) => patchIn("skills", sk.id, { name: e.target.value })}
           />
-        </div>
-      </Accordion>
+        </Field>
+        {/* 自定义描述输入框，用来写证书说明、技能详情 */}
+        <Field label={lang === "zh" ? "自定义描述" : "Description"}>
+          <TextArea
+            rows={2}
+            value={sk.desc}
+            placeholder={
+              lang === "zh"
+                ? "填写证书等级、掌握内容、技能详情等"
+                : "Fill in certificate info or skill details"
+            }
+            onChange={(e) => patchIn("skills", sk.id, { desc: e.target.value })}
+          />
+        </Field>
+      </EntryCard>
+    ))}
+    <AddButton
+      label={lang === "zh" ? "添加技能/证书" : "Add Skill / Certificate"}
+      onClick={() => addTo("skills", { id: uid(), name: "", desc: "" } as SkillItem)}
+    />
+  </div>
+</Accordion>
 
       {/* Awards */}
       <Accordion title={lang === "zh" ? "荣誉奖项" : "Honors & Awards"} hidden={isHidden("awards")}>
