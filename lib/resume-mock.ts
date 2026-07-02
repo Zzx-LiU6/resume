@@ -17,7 +17,7 @@ export const MOCK_DATA: ResumeData = {
     fullName: "",
     gender: "",
     birthDate: "",
-    phone: " ",
+    phone: "",
     email: "",
     city: "",
     jobIntention: "",

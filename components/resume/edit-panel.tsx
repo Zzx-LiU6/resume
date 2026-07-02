@@ -117,8 +117,8 @@ function Bullets({
   return (
     <div className="flex flex-col gap-2">
       <span className="text-xs font-medium text-muted-foreground">
-  {lang === "zh" ? "工作内容" : "Job Description (bullets)"}
-</span>
+        {lang === "zh" ? "工作内容" : "Job Description (bullets)"}
+      </span>
       {bullets.map((b, i) => (
         <div key={i} className="flex items-start gap-2">
           <span className="mt-2.5 h-1.5 w-1.5 shrink-0 rounded-full bg-muted-foreground" />
@@ -197,7 +197,7 @@ export function EditPanel({
           [key]: (d[key] as { id: string }[]).map((x) => (x.id === id ? { ...x, ...patch } : x)),
         }) as ResumeData,
     )
-      // 草稿本地存储标识
+  // 草稿本地存储标识
   const DRAFT_STORAGE_KEY = "resume_editor_draft"
   // 自动保存定时器
   const saveTimerRef = useRef<NodeJS.Timeout | null>(null)
@@ -266,11 +266,11 @@ export function EditPanel({
       {/* Fixed personal info */}
       <div className="rounded-lg border border-border bg-card p-4">
         <h2 className="mb-1 text-sm font-semibold text-foreground">
-  {lang === "zh" ? "个人信息" : "Personal Info"}
-</h2>
-<p className="mb-4 text-xs text-muted-foreground">
-  {lang === "zh" ? "固定于简历顶部，不可拖动或隐藏" : "Fixed at resume top, cannot drag or hide"}
-</p>
+          {lang === "zh" ? "个人信息" : "Personal Info"}
+        </h2>
+        <p className="mb-4 text-xs text-muted-foreground">
+          {lang === "zh" ? "固定于简历顶部，不可拖动或隐藏" : "Fixed at resume top, cannot drag or hide"}
+        </p>
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           <Field label={lang === "zh" ? "姓名" : "Full Name"}>
             <TextInput
@@ -322,9 +322,9 @@ export function EditPanel({
         <div className="mt-4 border-t border-border pt-4">
           <label className="flex cursor-pointer items-center justify-between gap-2">
             <span className="flex items-center gap-2 text-sm font-medium text-foreground">
-  <ImageIcon className="h-4 w-4 text-muted-foreground" />
-  {lang === "zh" ? "显示证件照" : "ID Photo"}
-</span>
+              <ImageIcon className="h-4 w-4 text-muted-foreground" />
+              {lang === "zh" ? "显示证件照" : "ID Photo"}
+            </span>
             <span className="relative inline-flex">
               <input
                 type="checkbox"
@@ -383,14 +383,39 @@ export function EditPanel({
         </div>
       </div>
 
+      {/* 草稿操作按钮组 */}
+      <div className="flex gap-3 flex-wrap">
+        <button
+          type="button"
+          onClick={saveDraft}
+          className="px-4 py-2 rounded-md bg-primary text-white text-sm"
+        >
+          {lang === "zh" ? "临时保存草稿" : "Save Draft"}
+        </button>
+        <button
+          type="button"
+          onClick={loadDraft}
+          className="px-4 py-2 rounded-md border border-border text-sm"
+        >
+          {lang === "zh" ? "加载草稿" : "Load Draft"}
+        </button>
+        <button
+          type="button"
+          onClick={clearDraft}
+          className="px-4 py-2 rounded-md border border-destructive text-destructive text-sm"
+        >
+          {lang === "zh" ? "清除本地草稿" : "Clear Draft"}
+        </button>
+      </div>
+
       {/* Section manager */}
       <div className="rounded-lg border border-border bg-card p-4">
         <h2 className="mb-1 text-sm font-semibold text-foreground">
-  {lang === "zh" ? "模块管理" : "Sections"}
-</h2>
+          {lang === "zh" ? "模块管理" : "Sections"}
+        </h2>
         <p className="mb-4 text-xs text-muted-foreground">
-  {lang === "zh" ? "拖动排序，点击眼睛图标显示 / 隐藏" : "Drag to reorder, click eye icon to show/hide"}
-</p>
+          {lang === "zh" ? "拖动排序，点击眼睛图标显示 / 隐藏" : "Drag to reorder, click eye icon to show/hide"}
+        </p>
         <SectionManager sections={sections} lang={lang} onReorder={onReorder} onToggle={onToggle} />
       </div>
 
@@ -408,7 +433,7 @@ export function EditPanel({
       <Accordion title={lang === "zh" ? "教育背景" : "Education"} hidden={isHidden("education")}>
         <div className="flex flex-col gap-3">
           {data.education.map((edu) => (
-            <EntryCard key={edu.id} title={edu.school || (lang === "zh" ? "新增院校" : "New School")}onDelete={() => removeFrom("education", edu.id)}>
+            <EntryCard key={edu.id} title={edu.school || (lang === "zh" ? "新增院校" : "New School")} onDelete={() => removeFrom("education", edu.id)}>
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                 <Field label={lang === "zh" ? "学校" : "School"}>
                   <TextInput value={edu.school} onChange={(e) => patchIn("education", edu.id, { school: e.target.value })} />
@@ -448,7 +473,7 @@ export function EditPanel({
 
       {/* Work */}
       <ExperienceSection
-      lang={lang}
+        lang={lang}
         title={lang === "zh" ? "工作经历" : "Work Experience"}
         hidden={isHidden("work")}
         items={data.work}
@@ -459,7 +484,7 @@ export function EditPanel({
 
       {/* Internship */}
       <ExperienceSection
-      lang={lang}
+        lang={lang}
         title={lang === "zh" ? "实习经历" : "Internship Experience"}
         hidden={isHidden("internship")}
         items={data.internship}
@@ -501,11 +526,11 @@ export function EditPanel({
 
       {/* Campus */}
       <ExperienceSection
-      lang={lang}
+        lang={lang}
         title={lang === "zh" ? "校园经历" : "Campus Experience"}
         hidden={isHidden("campus")}
         items={data.campus}
-        orgLabel={lang === "zh" ? "部门/社团名称" : "Activity / Club Name"}
+        orgLabel={lang === "zh" ? "部门/社团名称" : "Club / Activity Name"}
         onAdd={() => addTo("campus", { id: uid(), org: "", role: "", bullets: [""], ...emptyRange } as ExperienceItem)}
         onDelete={(id) => removeFrom("campus", id)}
         onPatch={(id, p) => patchIn("campus", id, p)}
@@ -520,18 +545,18 @@ export function EditPanel({
               <Field label={lang === "zh" ? "技能名称" : "Skill"} className="flex-auto">
                 <TextInput value={sk.name} onChange={(e) => patchIn("skills", sk.id, { name: e.target.value })} />
 
-                </Field>
-                {/* 熟练度组件已完整移除，只剩删除按钮 */}
-                <button
+              </Field>
+              {/* 熟练度组件已完整移除，只剩删除按钮 */}
+              <button
                 type="button"
                 onClick={() => removeFrom("skills", sk.id)}
                 className="mb-1 rounded p-2 text-muted-foreground hover:text-destructive"
                 aria-label="删除技能"
-                >
-                  <Trash2 className="h-4 w-4" />
-                  </button>
-                  </div>
-                ))}
+              >
+                <Trash2 className="h-4 w-4" />
+              </button>
+            </div>
+          ))}
           <AddButton
             label={lang === "zh" ? "添加技能" : "Add Skill"}
             onClick={() => addTo("skills", { id: uid(), name: "", level: "Skilled" } as SkillItem)}
@@ -544,7 +569,7 @@ export function EditPanel({
         <div className="flex flex-col gap-3">
           {data.awards.map((a) => (
             <EntryCard key={a.id} title={a.name || (lang === "zh" ? "新增奖项" : "New Award")}
-            onDelete={() => removeFrom("awards", a.id)}>
+              onDelete={() => removeFrom("awards", a.id)}>
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                 <Field label={lang === "zh" ? "奖项名称" : "Award Name"}>
                   <TextInput value={a.name} onChange={(e) => patchIn("awards", a.id, { name: e.target.value })} />
@@ -607,9 +632,9 @@ function ExperienceSection({
       <div className="flex flex-col gap-3">
         {items.map((it) => (
           <EntryCard key={it.id} title={it.org || (lang === "zh" ? "新增经历" : "New Entry")}
-           onDelete={() => onDelete(it.id)}>
+            onDelete={() => onDelete(it.id)}>
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-              <Field label={lang === "zh" ? "部门/社团" : orgLabel}>
+              <Field label={orgLabel}>
                 <TextInput value={it.org} onChange={(e) => onPatch(it.id, { org: e.target.value })} />
               </Field>
               <Field label={lang === "zh" ? "职位" : "Position / Role"}>
