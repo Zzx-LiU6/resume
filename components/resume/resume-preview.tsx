@@ -15,19 +15,31 @@ import {
 
 export type ResumeLayout = "split" | "stacked"
 
-const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+// 英文月份缩写（英文简历使用：月 年）
+const MONTHS_EN = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+// 中文数字月份（中文简历使用：2022年9月）
+const MONTHS_CN = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"]
 
-function fmt(ym: string): string {
+// 新增lang参数，区分中英文格式
+function fmt(ym: string, lang: Lang): string {
   if (!ym) return ""
   const [y, m] = ym.split("-")
   const mi = Number(m) - 1
-  if (!y) return ""
-  return m && mi >= 0 && mi < 12 ? `${MONTHS[mi]} ${y}` : y
+  if (!y || mi < 0 || mi >= 12) return y
+
+  if (lang === "zh") {
+    // 中文：2022年9月
+    return `${y}年${MONTHS_CN[mi]}月`
+  } else {
+    // 英文：Sep 2022（月在前）
+    return `${MONTHS_EN[mi]} ${y}`
+  }
 }
 
 function fmtRange(r: DateRange, lang: Lang): string {
-  const start = fmt(r.start)
-  const end = r.untilNow ? RESUME_LABELS.present[lang] : fmt(r.end)
+  // 把lang传入fmt函数
+  const start = fmt(r.start, lang)
+  const end = r.untilNow ? RESUME_LABELS.present[lang] : fmt(r.end, lang)
   if (!start && !end) return ""
   return [start, end].filter(Boolean).join(" – ")
 }
@@ -225,7 +237,7 @@ export function ResumePreview({
                     {a.issuer && <span style={{ color: "var(--subtle)" }}> · {a.issuer}</span>}
                   </span>
                   <span className="shrink-0 tabular-nums" style={{ fontSize: "0.6875em", color: "var(--subtle)" }}>
-                    {fmt(a.date)}
+                    {fmt(a.date, lang)}
                   </span>
                 </div>
               ))}
