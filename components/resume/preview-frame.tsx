@@ -33,7 +33,7 @@ export function PreviewFrame({ children }: { children: ReactNode }) {
   }, [measure])
 
   return (
-    <div ref={containerRef} className="w-full">
+    <div ref={containerRef} className="w-full overflow-hidden">
       <div style={{ height }} className="print:!h-auto">
         <div
           ref={paperRef}

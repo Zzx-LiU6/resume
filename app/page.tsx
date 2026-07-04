@@ -69,7 +69,7 @@ export default function Page() {
         </section>
 
         {/* Preview */}
-        <section className="print-region min-w-0 flex-1">
+        <section className="print-region min-w-0 flex-1 w-full max-w-full overflow-x-auto">
           <PreviewFrame>
             <ResumePreview
               data={data}
