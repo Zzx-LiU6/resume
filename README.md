@@ -1,33 +1,28 @@
-# resume
 
-This is a [Next.js](https://nextjs.org) project bootstrapped with [v0](https://v0.app).
+### 📄 AI 简历生成器
 
-## Built with v0
+```markdown
+# AI 简历生成器
 
-This repository is linked to a [v0](https://v0.app) project. You can continue developing by visiting the link below -- start new chats to make changes, and v0 will push commits directly to this repo. Every merge to `main` will automatically deploy.
+一个支持实时预览、多主题切换的简历制作工具，可导出为 PDF。
 
-[Continue working on v0 →](https://v0.app/chat/projects/prj_jBGWO7fA7AvdoO3uA9wv7XdE3JRV)
+**在线地址**：https://cvflow.pages.dev/
 
-## Getting Started
+## 主要功能
+- 左侧编辑 + 右侧实时预览
+- 分栏/单栏布局切换
+- 5 种配色主题
+- 模块拖拽排序 + 显示/隐藏
+- 草稿自动保存
+- PDF 导出
 
-First, run the development server:
+## 技术栈
+- React 19 + TypeScript
+- TanStack Start
+- Tailwind CSS + shadcn/ui
+- Cloudflare Pages
 
+## 本地运行
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-## Learn More
-
-To learn more, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-- [v0 Documentation](https://v0.app/docs) - learn about v0 and how to use it.
