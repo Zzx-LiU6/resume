@@ -1,3 +1,4 @@
+export const runtime = "edge"
 import { NextResponse } from "next/server"
 import { MOCK_DATA } from "@/lib/resume-mock"
 import type { ExperienceItem } from "@/lib/resume-types"
