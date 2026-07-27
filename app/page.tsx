@@ -41,26 +41,28 @@ export default function Page() {
   const rewriteWork = async () => {
     setIsRewritingWork(true)
     try {
+      // 传递完整简历，不再只传work模块
       const response = await fetch("https://rewrite-psi.vercel.app/api/rewrite", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ section: "work" }),
+        body: JSON.stringify({ fullResume: data }),
       })
       const payload = await response.json()
-      if (!response.ok || !payload.success || !Array.isArray(payload.result)) {
-        throw new Error(payload.error ?? "工作经历润色失败")
+      // 判断返回完整简历对象，不再判断数组
+      if (!response.ok || !payload.success || !payload.result) {
+        throw new Error(payload.error ?? "简历润色失败")
       }
 
-      setData((current) => ({ ...current, work: payload.result }))
+      // 直接覆盖整份简历全部内容
+      setData(payload.result)
       setWorkRewritten(true)
       window.setTimeout(() => setWorkRewritten(false), 3000)
     } catch (error) {
-      alert(error instanceof Error ? error.message : "工作经历润色失败")
+      alert(error instanceof Error ? error.message : "简历润色失败")
     } finally {
       setIsRewritingWork(false)
     }
   }
-
 
   return (
     <div className="min-h-screen bg-muted/40">
