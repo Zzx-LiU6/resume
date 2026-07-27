@@ -16,12 +16,12 @@
 
 ## 技术栈
 ---
-前端（简历编辑器，Cloudflare Pages 部署）
+### 前端（简历编辑器，Cloudflare Pages 部署）
 • React 19 + TypeScript
 • TanStack Start
 • Tailwind CSS + shadcn/ui
 • Cloudflare Pages
-AI 后端接口（独立服务，Vercel 部署）
+### AI 后端接口（独立服务，Vercel 部署）
 • Next.js API Route
 • 硅基流动大模型 API
 • Vercel 托管部署
