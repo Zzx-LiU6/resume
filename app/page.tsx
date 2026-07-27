@@ -17,6 +17,8 @@ import {
 
 export default function Page() {
   const [data, setData] = useState<ResumeData>(MOCK_DATA)
+  const [isRewritingWork, setIsRewritingWork] = useState(false)
+  const [workRewritten, setWorkRewritten] = useState(false)
   const [sections, setSections] = useState<SectionMeta[]>(DEFAULT_SECTIONS)
   const [themeId, setThemeId] = useState<ThemeId>("classic")
   const [layout, setLayout] = useState<LayoutMode>("split")
@@ -36,6 +38,29 @@ export default function Page() {
 
   const toggle = (type: SectionType) =>
     setSections((prev) => prev.map((s) => (s.type === type ? { ...s, visible: !s.visible } : s)))
+  const rewriteWork = async () => {
+    setIsRewritingWork(true)
+    try {
+      const response = await fetch("/api/rewrite", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ section: "work" }),
+      })
+      const payload = await response.json()
+      if (!response.ok || !payload.success || !Array.isArray(payload.result)) {
+        throw new Error(payload.error ?? "工作经历润色失败")
+      }
+
+      setData((current) => ({ ...current, work: payload.result }))
+      setWorkRewritten(true)
+      window.setTimeout(() => setWorkRewritten(false), 3000)
+    } catch (error) {
+      alert(error instanceof Error ? error.message : "工作经历润色失败")
+    } finally {
+      setIsRewritingWork(false)
+    }
+  }
+
 
   return (
     <div className="min-h-screen bg-muted/40">
@@ -49,6 +74,9 @@ export default function Page() {
         fontScale={fontScale}
         onFontScaleChange={setFontScale}
         onExport={() => window.print()}
+        onRewriteWork={rewriteWork}
+        isRewritingWork={isRewritingWork}
+        workRewritten={workRewritten}
       />
 
       <main className="mx-auto flex max-w-[1600px] flex-col gap-6 p-4 sm:p-6 lg:flex-row">
