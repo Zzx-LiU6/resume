@@ -1,20 +1,15 @@
 import { NextResponse } from "next/server"
-import { MOCK_DATA } from "@/lib/resume-mock"
-import type { ExperienceItem } from "@/lib/resume-types"
+import type { ResumeData } from "@/lib/resume-types"
 
 export const runtime = 'nodejs'
-const data = MOCK_DATA
-
-type RewriteResponse = {
-  work?: Array<Pick<ExperienceItem, "id" | "bullets">>
-}
 
 export async function POST(request: Request) {
   try {
-    const { section } = (await request.json()) as { section?: string }
+    // 接收完整简历对象
+    const { fullResume } = (await request.json()) as { fullResume?: ResumeData }
 
-    if (section !== "work") {
-      return NextResponse.json({ success: false, error: "仅支持润色工作经历" }, { status: 400 })
+    if (!fullResume) {
+      return NextResponse.json({ success: false, error: "缺少完整简历数据" }, { status: 400 })
     }
 
     const apiKey = process.env.SILICONFLOW_API_KEY
@@ -36,11 +31,13 @@ export async function POST(request: Request) {
           {
             role: "system",
             content:
-              "你是资深中文简历顾问。只返回合法 JSON，不要 markdown。不得虚构不存在的数字、成果或职责；只有原文提供明确数据时才保留或强化数据表达。",
+              "你是资深中文简历优化师。仅输出标准JSON，不要额外文字、markdown、注释。严禁虚构项目、数据、工作内容，仅优化原有文字措辞；保留简历全部字段、ID、条目数量不变，只优化语句，突出专业度与成果量化表达。",
           },
           {
             role: "user",
-            content: `请润色以下工作经历的 bullets，使表述更专业、行动导向且尽量体现已有的数据、范围或影响。保留每个条目的 id 和 bullets 数量。返回格式：{\"work\":[{\"id\":\"...\",\"bullets\":[\"...\"]}]}。\n\n${JSON.stringify(data.work)}`,
+            content: `对下面整份简历所有内容统一润色：个人简介、全部工作经历、项目经历、教育、技能。返回完整和输入结构完全一致的简历JSON对象，不要包裹额外key。
+简历原始数据：
+${JSON.stringify(fullResume)}`,
           },
         ],
       }),
@@ -54,21 +51,12 @@ export async function POST(request: Request) {
     const content = payload.choices?.[0]?.message?.content
     if (!content) throw new Error("硅基流动未返回润色结果")
 
-    const rewritten = JSON.parse(content) as RewriteResponse
-    if (!Array.isArray(rewritten.work) || rewritten.work.length !== data.work.length) {
-      throw new Error("润色结果格式不正确")
-    }
+    // 直接解析完整简历
+    const newResume = JSON.parse(content) as ResumeData
 
-    const result = data.work.map((item, index) => ({
-      ...item,
-      bullets: Array.isArray(rewritten.work?.[index]?.bullets)
-        ? rewritten.work[index].bullets.filter((bullet): bullet is string => typeof bullet === "string")
-        : item.bullets,
-    }))
-
-    return NextResponse.json({ success: true, result })
+    return NextResponse.json({ success: true, result: newResume })
   } catch (error) {
-    const message = error instanceof Error ? error.message : "工作经历润色失败"
+    const message = error instanceof Error ? error.message : "简历润色失败"
     return NextResponse.json({ success: false, error: message }, { status: 500 })
   }
 }
