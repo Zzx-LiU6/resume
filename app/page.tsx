@@ -53,8 +53,18 @@ export default function Page() {
         throw new Error(payload.error ?? "简历润色失败")
       }
 
-      // 直接覆盖整份简历全部内容
-      setData(payload.result)
+      // ============核心修改============
+      // 只覆盖简历文字字段，完全保留你现有的所有UI配置，不会重置隐藏板块、字号
+      setData((oldData) => ({
+        ...oldData,
+        intro: payload.result.intro,
+        work: payload.result.work,
+        project: payload.result.project,
+        education: payload.result.education,
+        skills: payload.result.skills
+      }))
+      // ==================================
+
       setWorkRewritten(true)
       window.setTimeout(() => setWorkRewritten(false), 3000)
     } catch (error) {
