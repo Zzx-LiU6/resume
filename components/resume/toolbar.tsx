@@ -1,6 +1,6 @@
 "use client"
 
-import { Columns2, Download, FileText, Languages, Rows2, Type } from "lucide-react"
+import { Columns2, Download, FileText, Languages, LoaderCircle, Rows2, Sparkles, Type } from "lucide-react"
 import { type Lang, type ResumeTheme, type ThemeId, THEMES } from "@/lib/resume-types"
 import { cn } from "@/lib/utils"
 
@@ -16,6 +16,9 @@ export function Toolbar({
   fontScale,
   onFontScaleChange,
   onExport,
+  onRewriteWork,
+  isRewritingWork,
+  workRewritten,
 }: {
   layout: LayoutMode
   onLayoutChange: (l: LayoutMode) => void
@@ -26,6 +29,9 @@ export function Toolbar({
   fontScale: number
   onFontScaleChange: (v: number) => void
   onExport: () => void
+  onRewriteWork: () => void
+  isRewritingWork: boolean
+  workRewritten: boolean
 }) {
   return (
     <header className="no-print sticky top-0 z-30 border-b border-border bg-background/80 backdrop-blur-md">
@@ -78,6 +84,29 @@ export function Toolbar({
 
           {/* Theme switch */}
           <ThemeSwitcher themeId={themeId} onThemeChange={onThemeChange} />
+
+          {/* AI润色工作经历按钮 */}
+          <button
+            type="button"
+            onClick={onRewriteWork}
+            disabled={isRewritingWork}
+            aria-busy={isRewritingWork}
+            className="flex items-center gap-1.5 rounded-md border border-border px-3 py-2 text-sm font-medium transition-colors hover:bg-muted disabled:cursor-not-allowed disabled:opacity-60"
+          >
+            {isRewritingWork ? <LoaderCircle className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
+            <span>{isRewritingWork ? "润色中..." : workRewritten ? "✅ 已润色" : "AI润色工作经历"}</span>
+          </button>
+
+          {/* Export */}
+          <button
+            type="button"
+            onClick={onExport}
+            className="flex items-center gap-1.5 rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground shadow-sm transition-opacity hover:opacity-90"
+          >
+            <Download className="h-4 w-4" />
+            <span className="hidden sm:inline">导出 PDF</span>
+          </button>
+
 
           {/* Export */}
           <button
