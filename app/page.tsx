@@ -41,7 +41,7 @@ export default function Page() {
   const rewriteWork = async () => {
     setIsRewritingWork(true)
     try {
-      const response = await fetch("/api/rewrite", {
+      const response = await fetch("https://rewrite-psi.vercel.app/api/rewrite", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ section: "work" }),
