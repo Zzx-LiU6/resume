@@ -94,7 +94,7 @@ export function Toolbar({
             className="flex items-center gap-1.5 rounded-md border border-border px-3 py-2 text-sm font-medium transition-colors hover:bg-muted disabled:cursor-not-allowed disabled:opacity-60"
           >
             {isRewritingWork ? <LoaderCircle className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
-            <span>{isRewritingWork ? "润色中..." : workRewritten ? "✅ 已润色" : "AI润色工作经历"}</span>
+            <span>{isRewritingWork ? "润色中..." : workRewritten ? "✅ 全部内容已优化" : "AI一键润色整份简历"}</span>
           </button>
 
           {/* Export */}
