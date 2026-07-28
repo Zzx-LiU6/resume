@@ -14,21 +14,8 @@ export const metadata: Metadata = {
   description: '全功能自定义简历生成器：分栏 / 上下双布局、多主题配色、模块拖拽排序、A4 打印与 PDF 导出。',
   generator: 'v0.app',
   icons: {
-    icon: [
-      {
-        url: '/icon-light-32x32.png',
-        media: '(prefers-color-scheme: light)',
-      },
-      {
-        url: '/icon-dark-32x32.png',
-        media: '(prefers-color-scheme: dark)',
-      },
-      {
-        url: '/icon.svg',
-        type: 'image/svg+xml',
-      },
-    ],
-    apple: '/apple-icon.png',
+    icon: '/favicon.svg',          // 浏览器标签页图标
+    apple: '/favicon.svg',         // 苹果设备书签图标（可选）
   },
 }
 
