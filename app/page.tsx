@@ -138,6 +138,7 @@ export default function Page() {
       console.log("9. data 更新完成")
 
       setWorkRewritten(true)
+      console.log("workRewritten 已设为 true")
       setProgressText("✅ 润色完成！")
       window.setTimeout(() => setProgressText(""), 3000)
     } catch (error) {
