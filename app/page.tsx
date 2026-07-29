@@ -165,7 +165,7 @@ export default function Page() {
         onExport={() => window.print()}
         onRewriteWork={rewriteWork}
         isRewritingWork={isRewritingWork}
-        workRewritten={true}
+        workRewritten={workRewritten}
         onRestoreOriginal={restoreOriginal}
         progressText={progressText}
       />
