@@ -49,18 +49,14 @@ export default function Page() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ fullResume: data }),
       })
-      const payload = await response.json()
-      if (!response.ok || !payload.success || !payload.result) {
-        throw new Error(payload.error ?? "简历润色失败")
+      const content = payload.choices?.[0]?.message?.content
+      if (!content) {
+        throw new Error("AI 未返回润色内容")
       }
 
       setData((oldData) => ({
         ...oldData,
-        intro: payload.result.intro,
-        work: payload.result.work,
-        project: payload.result.project,
-        education: payload.result.education,
-        skills: payload.result.skills
+        intro: content,
       }))
       // ==================================
 
