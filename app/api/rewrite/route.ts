@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server"
 import type { ResumeData } from "@/lib/resume-types"
+import { ResumeSchema } from '@/lib/resume-schema'
 
 export const runtime = 'nodejs'
 
@@ -52,7 +53,16 @@ ${JSON.stringify(fullResume)}`,
     if (!content) throw new Error("硅基流动未返回润色结果")
 
     // 直接解析完整简历
-    const newResume = JSON.parse(content) as ResumeData
+    let newResume
+    try {
+      newResume = ResumeSchema.parse(JSON.parse(content))
+    } catch (parseError) {
+      console.error('AI 返回数据格式校验失败:', parseError)
+      return NextResponse.json({ 
+        success: false, 
+        error: 'AI 返回的数据格式不符合预期，请重试' 
+      }, { status: 500 })
+    }
 
     return NextResponse.json({ success: true, result: newResume })
   } catch (error) {
