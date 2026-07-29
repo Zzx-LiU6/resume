@@ -43,12 +43,24 @@ export default function Page() {
     console.log("1. 按钮被点击了！")
     setIsRewritingWork(true)
     try {
-      console.log("2. 准备发送请求...")
+      // ====== 只发送有内容的字段 ======
+      const nonEmptyData: Partial<ResumeData> = {}
+      if (data.intro?.trim()) nonEmptyData.intro = data.intro
+      if (data.work?.length) nonEmptyData.work = data.work
+      if (data.internship?.length) nonEmptyData.internship = data.internship
+      if (data.project?.length) nonEmptyData.project = data.project
+      if (data.education?.length) nonEmptyData.education = data.education
+      if (data.skills?.length) nonEmptyData.skills = data.skills
+      if (data.evaluation?.trim()) nonEmptyData.evaluation = data.evaluation
+
+      console.log("2. 准备发送的数据（仅非空字段）:", nonEmptyData)
+
       const response = await fetch("https://rewrite-psi.vercel.app/api/rewrite", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ fullResume: data }),
+        body: JSON.stringify({ fullResume: nonEmptyData }),
       })
+
       console.log("3. 收到响应，状态码:", response.status)
 
       const payload = await response.json()
@@ -70,6 +82,7 @@ export default function Page() {
         result = JSON.parse(content)
         console.log("6. 解析为 JSON 成功:", result)
       } catch {
+        // 如果 AI 只返回了纯文本，当作 intro 处理
         result = { intro: content }
         console.log("6. 解析为纯文本，作为 intro:", result)
       }
@@ -79,9 +92,11 @@ export default function Page() {
         ...oldData,
         intro: result.intro ?? oldData.intro,
         work: result.work ?? oldData.work,
+        internship: result.internship ?? oldData.internship,
         project: result.project ?? oldData.project,
         education: result.education ?? oldData.education,
         skills: result.skills ?? oldData.skills,
+        evaluation: result.evaluation ?? oldData.evaluation,
       }))
       console.log("8. data 更新完成")
 
