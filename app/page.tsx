@@ -1,6 +1,6 @@
 "use client"
 
-import { useMemo, useState } from "react"
+import { useMemo, useState, useRef } from "react"
 import { EditPanel } from "@/components/resume/edit-panel"
 import { PreviewFrame } from "@/components/resume/preview-frame"
 import { ResumePreview } from "@/components/resume/resume-preview"
@@ -14,6 +14,7 @@ import {
   type ThemeId,
   THEMES,
 } from "@/lib/resume-types"
+import { ChevronDown, ChevronRight, RotateCcw } from "lucide-react"
 
 export default function Page() {
   const [data, setData] = useState<ResumeData>(MOCK_DATA)
@@ -26,8 +27,15 @@ export default function Page() {
   const [fontScale, setFontScale] = useState(1)
   const [showPhoto, setShowPhoto] = useState(true)
 
-  // 👇 新增：JD 输入状态
+  // JD 相关状态
   const [jd, setJd] = useState("")
+  const [jdExpanded, setJdExpanded] = useState(false)
+
+  // 润色进度状态
+  const [progressText, setProgressText] = useState("")
+
+  // 🔄 备份数据（用于恢复原文）
+  const originalDataRef = useRef<ResumeData | null>(null)
 
   const theme = useMemo(() => THEMES.find((t) => t.id === themeId) ?? THEMES[0], [themeId])
 
@@ -42,9 +50,25 @@ export default function Page() {
   const toggle = (type: SectionType) =>
     setSections((prev) => prev.map((s) => (s.type === type ? { ...s, visible: !s.visible } : s)))
 
+  // ✅ 恢复原文
+  const restoreOriginal = () => {
+    if (!originalDataRef.current) {
+      alert("没有可恢复的原文（请先进行一次润色）")
+      return
+    }
+    setData(originalDataRef.current)
+    setWorkRewritten(false)
+  }
+
+  // ✅ 润色主函数（带进度提示）
   const rewriteWork = async () => {
     console.log("1. 按钮被点击了！")
     setIsRewritingWork(true)
+    setWorkRewritten(false)
+
+    // 💾 润色前保存原始数据
+    originalDataRef.current = JSON.parse(JSON.stringify(data))
+
     try {
       // 只发送有内容的字段
       const nonEmptyData: Partial<ResumeData> = {}
@@ -56,6 +80,9 @@ export default function Page() {
       if (data.skills?.length) nonEmptyData.skills = data.skills
       if (data.evaluation?.trim()) nonEmptyData.evaluation = data.evaluation
 
+      const fields = Object.keys(nonEmptyData)
+      setProgressText(`📡 正在发送 ${fields.length} 个字段...`)
+
       console.log("2. 准备发送的数据（仅非空字段）:", nonEmptyData)
       console.log("3. JD 内容:", jd || "(无)")
 
@@ -64,9 +91,11 @@ export default function Page() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           fullResume: nonEmptyData,
-          jd: jd.trim(), // 👈 传递 JD
+          jd: jd.trim(),
         }),
       })
+
+      setProgressText("⏳ AI 正在润色中，请稍候...")
 
       console.log("4. 收到响应，状态码:", response.status)
 
@@ -93,6 +122,8 @@ export default function Page() {
         console.log("7. 解析为纯文本，作为 intro:", result)
       }
 
+      setProgressText("📝 正在应用润色结果...")
+
       console.log("8. 准备更新 data...")
       setData((oldData) => ({
         ...oldData,
@@ -107,9 +138,12 @@ export default function Page() {
       console.log("9. data 更新完成")
 
       setWorkRewritten(true)
-      window.setTimeout(() => setWorkRewritten(false), 3000)
+      setProgressText("✅ 润色完成！")
+      window.setTimeout(() => setProgressText(""), 3000)
     } catch (error) {
       console.error("润色失败:", error)
+      setProgressText("❌ 润色失败，请重试")
+      window.setTimeout(() => setProgressText(""), 3000)
       alert(error instanceof Error ? error.message : "简历润色失败，请重试")
     } finally {
       setIsRewritingWork(false)
@@ -131,21 +165,46 @@ export default function Page() {
         onRewriteWork={rewriteWork}
         isRewritingWork={isRewritingWork}
         workRewritten={workRewritten}
+        // 👇 新增：传递恢复原文函数
+        onRestoreOriginal={restoreOriginal}
+        // 👇 新增：传递进度文本
+        progressText={progressText}
       />
 
-      {/* 👇 新增：JD 输入框 */}
-      <div className="mx-auto max-w-[1600px] px-4 py-3 sm:px-6">
-        <div className="flex flex-col gap-1.5 rounded-lg border border-border bg-background p-3 sm:flex-row sm:items-center sm:gap-3">
-          <label htmlFor="jd-input" className="text-sm font-medium text-foreground whitespace-nowrap">
-            🎯 岗位描述（JD）：
-          </label>
-          <textarea
-            id="jd-input"
-            placeholder="粘贴目标岗位的职责描述（选填）。填写后，AI 会针对该岗位定向润色简历。"
-            value={jd}
-            onChange={(e) => setJd(e.target.value)}
-            className="flex-1 min-h-[60px] sm:min-h-[40px] rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm outline-none transition-colors placeholder:text-muted-foreground focus:border-ring focus:ring-2 focus:ring-ring/30 resize-y"
-          />
+      {/* 👇 JD 输入框（可折叠） */}
+      <div className="mx-auto max-w-[1600px] px-4 py-2 sm:px-6">
+        <div className="rounded-lg border border-border bg-background p-2">
+          <button
+            type="button"
+            onClick={() => setJdExpanded(!jdExpanded)}
+            className="flex w-full items-center gap-2 text-sm font-medium text-foreground hover:text-primary transition-colors"
+          >
+            {jdExpanded ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+            🎯 JD 定向润色
+            {jd.trim() && (
+              <span className="ml-1 rounded-full bg-primary/10 px-2 py-0.5 text-xs text-primary">
+                {jd.length > 20 ? jd.slice(0, 20) + "..." : jd}
+              </span>
+            )}
+            <span className="ml-auto text-xs text-muted-foreground">
+              {jdExpanded ? "点击收起" : "点击展开"}
+            </span>
+          </button>
+
+          {jdExpanded && (
+            <div className="mt-2">
+              <textarea
+                id="jd-input"
+                placeholder="粘贴目标岗位的职责描述（选填）。填写后，AI 会针对该岗位定向润色简历。"
+                value={jd}
+                onChange={(e) => setJd(e.target.value)}
+                className="w-full min-h-[80px] rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm outline-none transition-colors placeholder:text-muted-foreground focus:border-ring focus:ring-2 focus:ring-ring/30 resize-y"
+              />
+              <p className="mt-1 text-xs text-muted-foreground">
+                💡 填写 JD 后，AI 会针对该岗位关键词定向优化简历内容
+              </p>
+            </div>
+          )}
         </div>
       </div>
 
