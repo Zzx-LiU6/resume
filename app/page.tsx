@@ -50,13 +50,10 @@ export default function Page() {
         body: JSON.stringify({ fullResume: data }),
       })
       const payload = await response.json()
-      // 判断返回完整简历对象，不再判断数组
       if (!response.ok || !payload.success || !payload.result) {
         throw new Error(payload.error ?? "简历润色失败")
       }
 
-      // ============核心修改============
-      // 只覆盖简历文字字段，完全保留你现有的所有UI配置，不会重置隐藏板块、字号
       setData((oldData) => ({
         ...oldData,
         intro: payload.result.intro,
