@@ -27,14 +27,9 @@ export default function Page() {
   const [fontScale, setFontScale] = useState(1)
   const [showPhoto, setShowPhoto] = useState(true)
 
-  // JD 相关状态
   const [jd, setJd] = useState("")
   const [jdExpanded, setJdExpanded] = useState(false)
-
-  // 润色进度状态
   const [progressText, setProgressText] = useState("")
-
-  // 🔄 备份数据（用于恢复原文）
   const originalDataRef = useRef<ResumeData | null>(null)
 
   const theme = useMemo(() => THEMES.find((t) => t.id === themeId) ?? THEMES[0], [themeId])
@@ -50,7 +45,6 @@ export default function Page() {
   const toggle = (type: SectionType) =>
     setSections((prev) => prev.map((s) => (s.type === type ? { ...s, visible: !s.visible } : s)))
 
-  // ✅ 恢复原文
   const restoreOriginal = () => {
     if (!originalDataRef.current) {
       alert("没有可恢复的原文（请先进行一次润色）")
@@ -60,15 +54,17 @@ export default function Page() {
     setWorkRewritten(false)
   }
 
-  // ✅ 检查字段是否真正有内容（辅助函数）
+  // ✅ 检查字段是否真正有内容（排除 id 字段）
   const hasContent = (value: any): boolean => {
     if (Array.isArray(value)) {
-      // 数组：至少有一个条目包含非空内容
       return value.some((item) => {
-        // 检查对象的所有字符串字段
-        return Object.values(item).some(
-          (v) => typeof v === "string" && v.trim() !== ""
-        )
+        if (typeof item !== "object" || item === null) return false
+        return Object.entries(item).some(([key, val]) => {
+          if (key === "id") return false
+          if (typeof val === "string" && val.trim() !== "") return true
+          if (Array.isArray(val) && val.some(v => typeof v === "string" && v.trim() !== "")) return true
+          return false
+        })
       })
     }
     if (typeof value === "string") {
@@ -77,17 +73,14 @@ export default function Page() {
     return false
   }
 
-  // ✅ 润色主函数（带进度提示）
   const rewriteWork = async () => {
     console.log("1. 按钮被点击了！")
     setIsRewritingWork(true)
     setWorkRewritten(false)
 
-    // 💾 润色前保存原始数据
     originalDataRef.current = JSON.parse(JSON.stringify(data))
 
     try {
-      // ====== 只发送真正有内容的字段 ======
       const nonEmptyData: Partial<ResumeData> = {}
       if (hasContent(data.intro)) nonEmptyData.intro = data.intro
       if (hasContent(data.work)) nonEmptyData.work = data.work
@@ -97,7 +90,6 @@ export default function Page() {
       if (hasContent(data.skills)) nonEmptyData.skills = data.skills
       if (hasContent(data.evaluation)) nonEmptyData.evaluation = data.evaluation
 
-      // 如果没有可润色的内容，直接提示并返回
       if (Object.keys(nonEmptyData).length === 0) {
         setProgressText("⚠️ 没有可润色的内容，请先填写简历")
         window.setTimeout(() => setProgressText(""), 3000)
