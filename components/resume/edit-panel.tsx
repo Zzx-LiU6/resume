@@ -236,17 +236,17 @@ export function EditPanel({
   }
 
   // 页面打开时检测是否有草稿
-  useEffect(() => {
-    const raw = window.localStorage.getItem(DRAFT_STORAGE_KEY)
-    if (raw) {
-      const confirmRestore = window.confirm(
-        lang === "zh"
-          ? "检测到上次未保存的草稿，是否直接恢复？"
-          : "Detect unsaved draft, restore now?"
-      )
-      if (confirmRestore) loadDraft()
-    }
-  }, [])
+//  useEffect(() => {
+//    const raw = window.localStorage.getItem(DRAFT_STORAGE_KEY)
+//    if (raw) {
+//      const confirmRestore = window.confirm(
+//        lang === "zh"
+//          ? "检测到上次未保存的草稿，是否直接恢复？"
+//          : "Detect unsaved draft, restore now?"
+//      )
+//      if (confirmRestore) loadDraft()
+//    }
+//  }, [])
 
   // 输入停止1秒自动缓存草稿（可选，不需要可删除整块useEffect）
   useEffect(() => {
