@@ -40,6 +40,7 @@ export default function Page() {
     setSections((prev) => prev.map((s) => (s.type === type ? { ...s, visible: !s.visible } : s)))
   const rewriteWork = async () => {
     console.log('按钮被点击了！')
+    console.log('准备发送的数据:', data)
     setIsRewritingWork(true)
     try {
       // 传递完整简历，不再只传work模块
