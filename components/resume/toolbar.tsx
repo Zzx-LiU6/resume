@@ -1,6 +1,6 @@
 "use client"
 
-import { Columns2, Download, FileText, Languages, LoaderCircle, Rows2, Sparkles, Type } from "lucide-react"
+import { Columns2, Download, FileText, Languages, LoaderCircle, Rows2, Sparkles, Type, RotateCcw } from "lucide-react"
 import { type Lang, type ResumeTheme, type ThemeId, THEMES } from "@/lib/resume-types"
 import { cn } from "@/lib/utils"
 
@@ -19,6 +19,8 @@ export function Toolbar({
   onRewriteWork,
   isRewritingWork,
   workRewritten,
+  onRestoreOriginal,   // 👈 新增
+  progressText,        // 👈 新增
 }: {
   layout: LayoutMode
   onLayoutChange: (l: LayoutMode) => void
@@ -32,6 +34,8 @@ export function Toolbar({
   onRewriteWork: () => void
   isRewritingWork: boolean
   workRewritten: boolean
+  onRestoreOriginal: () => void   // 👈 新增
+  progressText: string            // 👈 新增
 }) {
   return (
     <header className="no-print sticky top-0 z-30 border-b border-border bg-background/80 backdrop-blur-md">
@@ -47,7 +51,7 @@ export function Toolbar({
         </div>
 
         <div className="ml-auto flex flex-wrap items-center gap-x-3 gap-y-2">
-          {/* Resume layout switch */}
+          {/* 布局切换 */}
           <div className="flex items-center rounded-md border border-border p-0.5" role="group" aria-label="简历布局">
             <ToggleBtn active={layout === "split"} onClick={() => onLayoutChange("split")} label="分栏">
               <Columns2 className="h-4 w-4" />
@@ -57,14 +61,14 @@ export function Toolbar({
             </ToggleBtn>
           </div>
 
-          {/* Language switch */}
+          {/* 语言切换 */}
           <div className="flex items-center rounded-md border border-border p-0.5" role="group" aria-label="标题语言">
             <Languages className="ml-1.5 h-4 w-4 text-muted-foreground" />
             <ToggleBtn active={lang === "zh"} onClick={() => onLangChange("zh")} label="中" alwaysLabel />
             <ToggleBtn active={lang === "en"} onClick={() => onLangChange("en")} label="EN" alwaysLabel />
           </div>
 
-          {/* Font size slider */}
+          {/* 字号缩放 */}
           <div className="flex items-center gap-2 rounded-md border border-border px-2.5 py-1.5">
             <Type className="h-4 w-4 text-muted-foreground" />
             <input
@@ -82,10 +86,23 @@ export function Toolbar({
             </span>
           </div>
 
-          {/* Theme switch */}
+          {/* 主题切换 */}
           <ThemeSwitcher themeId={themeId} onThemeChange={onThemeChange} />
 
-          {/* AI润色工作经历按钮 */}
+          {/* 👇 恢复原文按钮 */}
+          {workRewritten && (
+            <button
+              type="button"
+              onClick={onRestoreOriginal}
+              className="flex items-center gap-1.5 rounded-md border border-border px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+              title="恢复到润色前的版本"
+            >
+              <RotateCcw className="h-4 w-4" />
+              <span className="hidden sm:inline">恢复原文</span>
+            </button>
+          )}
+
+          {/* 👇 润色按钮（带进度文字） */}
           <button
             type="button"
             onClick={onRewriteWork}
@@ -93,11 +110,21 @@ export function Toolbar({
             aria-busy={isRewritingWork}
             className="flex items-center gap-1.5 rounded-md border border-border px-3 py-2 text-sm font-medium transition-colors hover:bg-muted disabled:cursor-not-allowed disabled:opacity-60"
           >
-            {isRewritingWork ? <LoaderCircle className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
-            <span>{isRewritingWork ? "润色中..." : workRewritten ? "✅ 全部内容已优化" : "AI一键润色整份简历"}</span>
+            {isRewritingWork ? (
+              <LoaderCircle className="h-4 w-4 animate-spin" />
+            ) : (
+              <Sparkles className="h-4 w-4" />
+            )}
+            <span>
+              {isRewritingWork
+                ? progressText || "润色中..."
+                : workRewritten
+                ? "✅ 已润色"
+                : "AI一键润色"}
+            </span>
           </button>
 
-          {/* Export */}
+          {/* 导出 PDF */}
           <button
             type="button"
             onClick={onExport}
