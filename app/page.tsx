@@ -39,6 +39,7 @@ export default function Page() {
   const toggle = (type: SectionType) =>
     setSections((prev) => prev.map((s) => (s.type === type ? { ...s, visible: !s.visible } : s)))
   const rewriteWork = async () => {
+    console.log('按钮被点击了！')
     setIsRewritingWork(true)
     try {
       // 传递完整简历，不再只传work模块
