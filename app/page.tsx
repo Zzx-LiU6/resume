@@ -14,7 +14,7 @@ import {
   type ThemeId,
   THEMES,
 } from "@/lib/resume-types"
-import { ChevronDown, ChevronRight, RotateCcw } from "lucide-react"
+import { ChevronDown, ChevronRight } from "lucide-react"
 
 export default function Page() {
   const [data, setData] = useState<ResumeData>(MOCK_DATA)
@@ -60,6 +60,23 @@ export default function Page() {
     setWorkRewritten(false)
   }
 
+  // ✅ 检查字段是否真正有内容（辅助函数）
+  const hasContent = (value: any): boolean => {
+    if (Array.isArray(value)) {
+      // 数组：至少有一个条目包含非空内容
+      return value.some((item) => {
+        // 检查对象的所有字符串字段
+        return Object.values(item).some(
+          (v) => typeof v === "string" && v.trim() !== ""
+        )
+      })
+    }
+    if (typeof value === "string") {
+      return value.trim() !== ""
+    }
+    return false
+  }
+
   // ✅ 润色主函数（带进度提示）
   const rewriteWork = async () => {
     console.log("1. 按钮被点击了！")
@@ -70,15 +87,24 @@ export default function Page() {
     originalDataRef.current = JSON.parse(JSON.stringify(data))
 
     try {
-      // 只发送有内容的字段
+      // ====== 只发送真正有内容的字段 ======
       const nonEmptyData: Partial<ResumeData> = {}
-      if (data.intro?.trim()) nonEmptyData.intro = data.intro
-      if (data.work?.length) nonEmptyData.work = data.work
-      if (data.internship?.length) nonEmptyData.internship = data.internship
-      if (data.project?.length) nonEmptyData.project = data.project
-      if (data.education?.length) nonEmptyData.education = data.education
-      if (data.skills?.length) nonEmptyData.skills = data.skills
-      if (data.evaluation?.trim()) nonEmptyData.evaluation = data.evaluation
+      if (hasContent(data.intro)) nonEmptyData.intro = data.intro
+      if (hasContent(data.work)) nonEmptyData.work = data.work
+      if (hasContent(data.internship)) nonEmptyData.internship = data.internship
+      if (hasContent(data.project)) nonEmptyData.project = data.project
+      if (hasContent(data.education)) nonEmptyData.education = data.education
+      if (hasContent(data.skills)) nonEmptyData.skills = data.skills
+      if (hasContent(data.evaluation)) nonEmptyData.evaluation = data.evaluation
+
+      // 如果没有可润色的内容，直接提示并返回
+      if (Object.keys(nonEmptyData).length === 0) {
+        setProgressText("⚠️ 没有可润色的内容，请先填写简历")
+        window.setTimeout(() => setProgressText(""), 3000)
+        alert("请先填写一些简历内容（如工作经历、项目等）")
+        setIsRewritingWork(false)
+        return
+      }
 
       const fields = Object.keys(nonEmptyData)
       setProgressText(`📡 正在发送 ${fields.length} 个字段...`)
@@ -138,7 +164,6 @@ export default function Page() {
       console.log("9. data 更新完成")
 
       setWorkRewritten(true)
-      console.log("workRewritten 已设为 true")
       setProgressText("✅ 润色完成！")
       window.setTimeout(() => setProgressText(""), 3000)
     } catch (error) {
@@ -170,7 +195,7 @@ export default function Page() {
         progressText={progressText}
       />
 
-      {/* 👇 JD 输入框（可折叠） */}
+      {/* JD 输入框（可折叠） */}
       <div className="mx-auto max-w-[1600px] px-4 py-2 sm:px-6">
         <div className="rounded-lg border border-border bg-background p-2">
           <button
