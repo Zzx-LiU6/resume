@@ -38,32 +38,53 @@ export default function Page() {
 
   const toggle = (type: SectionType) =>
     setSections((prev) => prev.map((s) => (s.type === type ? { ...s, visible: !s.visible } : s)))
+
   const rewriteWork = async () => {
-    console.log('按钮被点击了！')
-    console.log('准备发送的数据:', data)
+    console.log("按钮被点击了！")
     setIsRewritingWork(true)
     try {
-      // 传递完整简历，不再只传work模块
       const response = await fetch("https://rewrite-psi.vercel.app/api/rewrite", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ fullResume: data }),
       })
+
+      const payload = await response.json()
+
+      // 检查是否返回了错误
+      if (!response.ok) {
+        throw new Error(payload.error || `请求失败（${response.status}）`)
+      }
+
+      // 从硅基流动的返回格式中提取内容
       const content = payload.choices?.[0]?.message?.content
       if (!content) {
         throw new Error("AI 未返回润色内容")
       }
 
+      // 尝试解析为 JSON，如果失败则作为纯文本处理
+      let result
+      try {
+        result = JSON.parse(content)
+      } catch {
+        // 如果 AI 返回的是纯文本，直接作为 intro 处理
+        result = { intro: content }
+      }
+
       setData((oldData) => ({
         ...oldData,
-        intro: content,
+        intro: result.intro ?? oldData.intro,
+        work: result.work ?? oldData.work,
+        project: result.project ?? oldData.project,
+        education: result.education ?? oldData.education,
+        skills: result.skills ?? oldData.skills,
       }))
-      // ==================================
 
       setWorkRewritten(true)
       window.setTimeout(() => setWorkRewritten(false), 3000)
     } catch (error) {
-      alert(error instanceof Error ? error.message : "简历润色失败")
+      console.error("润色失败:", error)
+      alert(error instanceof Error ? error.message : "简历润色失败，请重试")
     } finally {
       setIsRewritingWork(false)
     }
