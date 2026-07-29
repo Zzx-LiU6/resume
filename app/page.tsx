@@ -26,6 +26,9 @@ export default function Page() {
   const [fontScale, setFontScale] = useState(1)
   const [showPhoto, setShowPhoto] = useState(true)
 
+  // 👇 新增：JD 输入状态
+  const [jd, setJd] = useState("")
+
   const theme = useMemo(() => THEMES.find((t) => t.id === themeId) ?? THEMES[0], [themeId])
 
   const reorder = (from: number, to: number) =>
@@ -43,7 +46,7 @@ export default function Page() {
     console.log("1. 按钮被点击了！")
     setIsRewritingWork(true)
     try {
-      // ====== 只发送有内容的字段 ======
+      // 只发送有内容的字段
       const nonEmptyData: Partial<ResumeData> = {}
       if (data.intro?.trim()) nonEmptyData.intro = data.intro
       if (data.work?.length) nonEmptyData.work = data.work
@@ -54,24 +57,28 @@ export default function Page() {
       if (data.evaluation?.trim()) nonEmptyData.evaluation = data.evaluation
 
       console.log("2. 准备发送的数据（仅非空字段）:", nonEmptyData)
+      console.log("3. JD 内容:", jd || "(无)")
 
       const response = await fetch("https://rewrite-psi.vercel.app/api/rewrite", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ fullResume: nonEmptyData }),
+        body: JSON.stringify({
+          fullResume: nonEmptyData,
+          jd: jd.trim(), // 👈 传递 JD
+        }),
       })
 
-      console.log("3. 收到响应，状态码:", response.status)
+      console.log("4. 收到响应，状态码:", response.status)
 
       const payload = await response.json()
-      console.log("4. 解析后的 payload:", payload)
+      console.log("5. 解析后的 payload:", payload)
 
       if (!response.ok) {
         throw new Error(payload.error || `请求失败（${response.status}）`)
       }
 
       const content = payload.choices?.[0]?.message?.content
-      console.log("5. 提取的 content:", content)
+      console.log("6. 提取的 content:", content)
 
       if (!content) {
         throw new Error("AI 未返回润色内容")
@@ -80,14 +87,13 @@ export default function Page() {
       let result
       try {
         result = JSON.parse(content)
-        console.log("6. 解析为 JSON 成功:", result)
+        console.log("7. 解析为 JSON 成功:", result)
       } catch {
-        // 如果 AI 只返回了纯文本，当作 intro 处理
         result = { intro: content }
-        console.log("6. 解析为纯文本，作为 intro:", result)
+        console.log("7. 解析为纯文本，作为 intro:", result)
       }
 
-      console.log("7. 准备更新 data...")
+      console.log("8. 准备更新 data...")
       setData((oldData) => ({
         ...oldData,
         intro: result.intro ?? oldData.intro,
@@ -98,7 +104,7 @@ export default function Page() {
         skills: result.skills ?? oldData.skills,
         evaluation: result.evaluation ?? oldData.evaluation,
       }))
-      console.log("8. data 更新完成")
+      console.log("9. data 更新完成")
 
       setWorkRewritten(true)
       window.setTimeout(() => setWorkRewritten(false), 3000)
@@ -126,6 +132,22 @@ export default function Page() {
         isRewritingWork={isRewritingWork}
         workRewritten={workRewritten}
       />
+
+      {/* 👇 新增：JD 输入框 */}
+      <div className="mx-auto max-w-[1600px] px-4 py-3 sm:px-6">
+        <div className="flex flex-col gap-1.5 rounded-lg border border-border bg-background p-3 sm:flex-row sm:items-center sm:gap-3">
+          <label htmlFor="jd-input" className="text-sm font-medium text-foreground whitespace-nowrap">
+            🎯 岗位描述（JD）：
+          </label>
+          <textarea
+            id="jd-input"
+            placeholder="粘贴目标岗位的职责描述（选填）。填写后，AI 会针对该岗位定向润色简历。"
+            value={jd}
+            onChange={(e) => setJd(e.target.value)}
+            className="flex-1 min-h-[60px] sm:min-h-[40px] rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm outline-none transition-colors placeholder:text-muted-foreground focus:border-ring focus:ring-2 focus:ring-ring/30 resize-y"
+          />
+        </div>
+      </div>
 
       <main className="mx-auto flex max-w-[1600px] flex-col gap-6 p-4 sm:p-6 lg:flex-row">
         <section className="no-print w-full min-w-0 lg:w-[440px] lg:shrink-0">
