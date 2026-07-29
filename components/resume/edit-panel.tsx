@@ -217,15 +217,26 @@ export function EditPanel({
   const loadDraft = () => {
     try {
       const raw = window.localStorage.getItem(DRAFT_STORAGE_KEY)
+      console.log("原始草稿数据:", raw)  // 调试日志
       if (!raw) {
         alert(lang === "zh" ? "暂无本地草稿" : "No local draft found")
         return
       }
       const draftData = JSON.parse(raw) as ResumeData
+      console.log("解析后的数据:", draftData)  // 调试日志
+
+      // 检查数据结构是否完整（确保有 personal 等关键字段）
+      if (!draftData.personal || !draftData.work || !draftData.education) {
+        throw new Error("草稿数据结构不完整，可能已损坏")
+      }
+
       setData(draftData)
       alert(lang === "zh" ? "已加载上次草稿内容" : "Draft loaded successfully")
     } catch (err) {
+      // 把错误信息展示给用户
+      const msg = err instanceof Error ? err.message : "加载草稿失败"
       console.error("读取草稿失败", err)
+      alert(lang === "zh" ? `加载草稿失败: ${msg}` : `Load draft failed: ${msg}`)
     }
   }
 
