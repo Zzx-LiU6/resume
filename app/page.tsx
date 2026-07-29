@@ -165,10 +165,8 @@ export default function Page() {
         onExport={() => window.print()}
         onRewriteWork={rewriteWork}
         isRewritingWork={isRewritingWork}
-        workRewritten={workRewritten}
-        // 👇 新增：传递恢复原文函数
+        workRewritten={true}
         onRestoreOriginal={restoreOriginal}
-        // 👇 新增：传递进度文本
         progressText={progressText}
       />
 
