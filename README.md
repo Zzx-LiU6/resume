@@ -2,7 +2,7 @@
 ---
 一个支持实时预览、多主题切换的简历制作工具，可导出为 PDF。
 
-在线地址: https://cvflow.pages.dev/
+在线地址: https://cvflow.pages.dev
 
 ## 主要功能
 ---
