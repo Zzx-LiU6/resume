@@ -128,7 +128,7 @@ async function generateSplitLayout(pptx: PptxGenJS, data: ResumeData, colors: an
   // 自我介绍
   const intro = safeText(data.intro);
   if (intro) {
-    addSectionTitle(slide, "自我介绍", contentX, y, contentWidth, colors);
+    addSectionTitle(pptx, slide, "自我介绍", contentX, y, contentWidth, colors);
     y += 0.8;
     addTextBlock(slide, intro, contentX + 0.2, y, contentWidth - 0.4, 0.9, colors);
     y += 1.1;
@@ -138,7 +138,7 @@ async function generateSplitLayout(pptx: PptxGenJS, data: ResumeData, colors: an
   if (data.work && data.work.length > 0) {
     const hasWork = data.work.some(j => safeText(j.org));
     if (hasWork) {
-      addSectionTitle(slide, "工作经历", contentX, y, contentWidth, colors);
+      addSectionTitle(pptx, slide, "工作经历", contentX, y, contentWidth, colors);
       y += 0.8;
 
       for (const job of data.work) {
@@ -182,7 +182,7 @@ async function generateSplitLayout(pptx: PptxGenJS, data: ResumeData, colors: an
   if (data.project && data.project.length > 0) {
     const hasProject = data.project.some(p => safeText(p.name));
     if (hasProject) {
-      addSectionTitle(slide, "项目经历", contentX, y, contentWidth, colors);
+      addSectionTitle(pptx, slide, "项目经历", contentX, y, contentWidth, colors);
       y += 0.8;
 
       for (const proj of data.project) {
@@ -226,7 +226,7 @@ async function generateSplitLayout(pptx: PptxGenJS, data: ResumeData, colors: an
   if (data.education && data.education.length > 0) {
     const hasEdu = data.education.some(e => safeText(e.school));
     if (hasEdu) {
-      addSectionTitle(slide, "教育背景", contentX, y, contentWidth, colors);
+      addSectionTitle(pptx, slide, "教育背景", contentX, y, contentWidth, colors);
       y += 0.8;
 
       for (const edu of data.education) {
@@ -257,7 +257,7 @@ async function generateSplitLayout(pptx: PptxGenJS, data: ResumeData, colors: an
   if (data.skills && data.skills.length > 0) {
     const skillNames = data.skills.map(s => safeText(s.name)).filter(Boolean);
     if (skillNames.length > 0) {
-      addSectionTitle(slide, "专业技能", contentX, y, contentWidth, colors);
+      addSectionTitle(pptx, slide, "专业技能", contentX, y, contentWidth, colors);
       y += 0.8;
       slide.addText(skillNames.join(" · "), {
         x: contentX + 0.2,
@@ -276,7 +276,7 @@ async function generateSplitLayout(pptx: PptxGenJS, data: ResumeData, colors: an
   // 自我评价
   const evalText = safeText(data.evaluation);
   if (evalText) {
-    addSectionTitle(slide, "自我评价", contentX, y, contentWidth, colors);
+    addSectionTitle(pptx, slide, "自我评价", contentX, y, contentWidth, colors);
     y += 0.8;
     addTextBlock(slide, evalText, contentX + 0.2, y, contentWidth - 0.4, 0.9, colors);
     y += 1.0;
@@ -284,7 +284,7 @@ async function generateSplitLayout(pptx: PptxGenJS, data: ResumeData, colors: an
 }
 
 // ============================================================
-// 单栏布局（与分栏类似，只是去掉侧边栏，内容居中）
+// 单栏布局
 // ============================================================
 async function generateStackedLayout(pptx: PptxGenJS, data: ResumeData, colors: any) {
   const slide = pptx.addSlide();
@@ -362,21 +362,19 @@ async function generateStackedLayout(pptx: PptxGenJS, data: ResumeData, colors: 
   });
   y += 0.6;
 
-  // ---- 内容模块（复用辅助函数） ----
-  // 自我介绍
+  // ---- 内容模块 ----
   const intro = safeText(data.intro);
   if (intro) {
-    addSectionTitle(slide, "自我介绍", margin, y, contentWidth, colors);
+    addSectionTitle(pptx, slide, "自我介绍", margin, y, contentWidth, colors);
     y += 0.8;
     addTextBlock(slide, intro, margin + 0.2, y, contentWidth - 0.4, 0.9, colors);
     y += 1.1;
   }
 
-  // 工作经历
   if (data.work && data.work.length > 0) {
     const hasWork = data.work.some(j => safeText(j.org));
     if (hasWork) {
-      addSectionTitle(slide, "工作经历", margin, y, contentWidth, colors);
+      addSectionTitle(pptx, slide, "工作经历", margin, y, contentWidth, colors);
       y += 0.8;
       for (const job of data.work) {
         const org = safeText(job.org);
@@ -414,11 +412,10 @@ async function generateStackedLayout(pptx: PptxGenJS, data: ResumeData, colors: 
     }
   }
 
-  // 项目经历
   if (data.project && data.project.length > 0) {
     const hasProject = data.project.some(p => safeText(p.name));
     if (hasProject) {
-      addSectionTitle(slide, "项目经历", margin, y, contentWidth, colors);
+      addSectionTitle(pptx, slide, "项目经历", margin, y, contentWidth, colors);
       y += 0.8;
       for (const proj of data.project) {
         const name = safeText(proj.name);
@@ -456,11 +453,10 @@ async function generateStackedLayout(pptx: PptxGenJS, data: ResumeData, colors: 
     }
   }
 
-  // 教育背景
   if (data.education && data.education.length > 0) {
     const hasEdu = data.education.some(e => safeText(e.school));
     if (hasEdu) {
-      addSectionTitle(slide, "教育背景", margin, y, contentWidth, colors);
+      addSectionTitle(pptx, slide, "教育背景", margin, y, contentWidth, colors);
       y += 0.8;
       for (const edu of data.education) {
         const school = safeText(edu.school);
@@ -486,11 +482,10 @@ async function generateStackedLayout(pptx: PptxGenJS, data: ResumeData, colors: 
     }
   }
 
-  // 专业技能
   if (data.skills && data.skills.length > 0) {
     const skillNames = data.skills.map(s => safeText(s.name)).filter(Boolean);
     if (skillNames.length > 0) {
-      addSectionTitle(slide, "专业技能", margin, y, contentWidth, colors);
+      addSectionTitle(pptx, slide, "专业技能", margin, y, contentWidth, colors);
       y += 0.8;
       slide.addText(skillNames.join(" · "), {
         x: margin + 0.2,
@@ -508,7 +503,7 @@ async function generateStackedLayout(pptx: PptxGenJS, data: ResumeData, colors: 
 
   const evalText = safeText(data.evaluation);
   if (evalText) {
-    addSectionTitle(slide, "自我评价", margin, y, contentWidth, colors);
+    addSectionTitle(pptx, slide, "自我评价", margin, y, contentWidth, colors);
     y += 0.8;
     addTextBlock(slide, evalText, margin + 0.2, y, contentWidth - 0.4, 0.9, colors);
     y += 1.0;
@@ -516,9 +511,9 @@ async function generateStackedLayout(pptx: PptxGenJS, data: ResumeData, colors: 
 }
 
 // ============================================================
-// 辅助函数
+// 辅助函数（已修复）
 // ============================================================
-function addSectionTitle(slide: any, title: string, x: number, y: number, width: number, colors: any) {
+function addSectionTitle(pptx: PptxGenJS, slide: any, title: string, x: number, y: number, width: number, colors: any) {
   slide.addText(title, {
     x: x,
     y: y,
@@ -529,7 +524,8 @@ function addSectionTitle(slide: any, title: string, x: number, y: number, width:
     color: colors.accent,
     bold: true,
   });
-  slide.addShape(slide.pptx.ShapeType.rect, {
+  // 关键修复：使用 pptx.ShapeType.rect
+  slide.addShape(pptx.ShapeType.rect, {
     x: x,
     y: y + 0.65,
     w: width,
