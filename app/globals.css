@@ -230,7 +230,7 @@
   }
 
   /* 隐藏 JD 输入框区域（如果有独立类名） */
-  .jd-input-area {
+  .jd-input-container {
     display: none !important;
   }
 
