@@ -23,40 +23,6 @@ function hasSectionContent(data: ResumeData, type: string): boolean {
   }
 }
 
-/**
- * 手动给长文本插入换行符，确保在 PPT 中正确换行
- */
-function wrapText(text: string, maxCharsPerLine: number = 18): string {
-  if (!text) return "";
-  const lines: string[] = [];
-  let currentLine = "";
-  for (const char of text) {
-    if (char === "\n") {
-      lines.push(currentLine);
-      currentLine = "";
-      continue;
-    }
-    currentLine += char;
-    if (currentLine.length >= maxCharsPerLine) {
-      // 优先在标点处断开
-      const punctuation = currentLine.match(/[，。、！？；：,.!?;:\s]/g);
-      if (punctuation && currentLine.length > maxCharsPerLine * 0.7) {
-        const lastPunc = punctuation[punctuation.length - 1];
-        const lastIndex = currentLine.lastIndexOf(lastPunc);
-        if (lastIndex > 0 && lastIndex < currentLine.length - 1) {
-          lines.push(currentLine.substring(0, lastIndex + 1));
-          currentLine = currentLine.substring(lastIndex + 1);
-          continue;
-        }
-      }
-      lines.push(currentLine.substring(0, maxCharsPerLine));
-      currentLine = currentLine.substring(maxCharsPerLine);
-    }
-  }
-  if (currentLine) lines.push(currentLine);
-  return lines.join("\n");
-}
-
 export async function exportToPPT(
   data: ResumeData,
   theme: ResumeTheme,
@@ -123,7 +89,7 @@ async function generateSplitLayout(
   let sideY = margin + 0.8;
   const p = data.personal;
 
-  // 姓名
+  // 姓名（加大）
   const name = safeText(p.fullName);
   if (name) {
     slide.addText(name, {
@@ -140,7 +106,7 @@ async function generateSplitLayout(
     sideY += 1.6;
   }
 
-  // 求职意向
+  // 求职意向（加大）
   const jobIntention = safeText(p.jobIntention);
   if (jobIntention) {
     slide.addText(jobIntention, {
@@ -157,7 +123,7 @@ async function generateSplitLayout(
     sideY += 1.0;
   }
 
-  // 联系方式
+  // 联系方式（加大）
   const contactItems = [
     { icon: "📞", text: p.phone },
     { icon: "✉️", text: p.email },
@@ -193,7 +159,7 @@ async function generateSplitLayout(
           addSectionTitle(pptx, slide, "自我介绍", contentX, y, contentWidth, colors);
           y += 0.7;
           addTextBlock(slide, text, contentX + 0.2, y, contentWidth - 0.4, colors);
-          y += 2.2; // 预留足够空间
+          y += 1.9; // 增加间距
         }
         break;
       }
@@ -219,20 +185,19 @@ async function generateSplitLayout(
             y += 0.6;
             const bullets = (job.bullets || []).map(safeText).filter(b => b);
             for (const b of bullets) {
-              const wrapped = wrapText(b, 18);
-              slide.addText(`• ${wrapped}`, {
+              slide.addText(`• ${b}`, {
                 x: contentX + 0.7,
                 y: y,
                 w: contentWidth - 1.0,
-                h: 0.8,
+                h: 0.5,
                 fontSize: 13,
                 fontFace: "Microsoft YaHei",
                 color: colors.ink,
                 valign: "top",
-                lineSpacing: 1.4,
-                wrap: false,
+                lineSpacing: 1.5,
+                wrap: true,
               });
-              y += 0.9;
+              y += 0.55;
             }
             y += 0.2;
           }
@@ -261,20 +226,19 @@ async function generateSplitLayout(
             y += 0.6;
             const bullets = (job.bullets || []).map(safeText).filter(b => b);
             for (const b of bullets) {
-              const wrapped = wrapText(b, 18);
-              slide.addText(`• ${wrapped}`, {
+              slide.addText(`• ${b}`, {
                 x: contentX + 0.7,
                 y: y,
                 w: contentWidth - 1.0,
-                h: 0.8,
+                h: 0.5,
                 fontSize: 13,
                 fontFace: "Microsoft YaHei",
                 color: colors.ink,
                 valign: "top",
-                lineSpacing: 1.4,
-                wrap: false,
+                lineSpacing: 1.5,
+                wrap: true,
               });
-              y += 0.9;
+              y += 0.55;
             }
             y += 0.2;
           }
@@ -303,20 +267,19 @@ async function generateSplitLayout(
             y += 0.6;
             const introText = safeText(proj.intro);
             if (introText) {
-              const wrapped = wrapText(introText, 18);
-              slide.addText(wrapped, {
+              slide.addText(introText, {
                 x: contentX + 0.7,
                 y: y,
                 w: contentWidth - 1.0,
-                h: 0.8,
+                h: 0.5,
                 fontSize: 13,
                 fontFace: "Microsoft YaHei",
                 color: colors.ink,
                 valign: "top",
-                lineSpacing: 1.4,
-                wrap: false,
+                lineSpacing: 1.5,
+                wrap: true,
               });
-              y += 0.9;
+              y += 0.55;
             }
             y += 0.2;
           }
@@ -401,7 +364,7 @@ async function generateSplitLayout(
           addSectionTitle(pptx, slide, "自我评价", contentX, y, contentWidth, colors);
           y += 0.7;
           addTextBlock(slide, text, contentX + 0.2, y, contentWidth - 0.4, colors);
-          y += 2.2;
+          y += 1.9;
         }
         break;
       }
@@ -410,7 +373,7 @@ async function generateSplitLayout(
 }
 
 // ============================================================
-// 单栏布局（与分栏逻辑一致，仅坐标不同）
+// 单栏布局（字体和间距与分栏保持一致）
 // ============================================================
 async function generateStackedLayout(
   pptx: PptxGenJS,
@@ -502,7 +465,7 @@ async function generateStackedLayout(
           addSectionTitle(pptx, slide, "自我介绍", margin, y, contentWidth, colors);
           y += 0.7;
           addTextBlock(slide, text, margin + 0.2, y, contentWidth - 0.4, colors);
-          y += 2.2;
+          y += 1.9;
         }
         break;
       }
@@ -528,20 +491,19 @@ async function generateStackedLayout(
             y += 0.6;
             const bullets = (job.bullets || []).map(safeText).filter(b => b);
             for (const b of bullets) {
-              const wrapped = wrapText(b, 18);
-              slide.addText(`• ${wrapped}`, {
+              slide.addText(`• ${b}`, {
                 x: margin + 0.7,
                 y: y,
                 w: contentWidth - 1.0,
-                h: 0.8,
+                h: 0.5,
                 fontSize: 13,
                 fontFace: "Microsoft YaHei",
                 color: colors.ink,
                 valign: "top",
-                lineSpacing: 1.4,
-                wrap: false,
+                lineSpacing: 1.5,
+                wrap: true,
               });
-              y += 0.9;
+              y += 0.55;
             }
             y += 0.2;
           }
@@ -570,20 +532,19 @@ async function generateStackedLayout(
             y += 0.6;
             const bullets = (job.bullets || []).map(safeText).filter(b => b);
             for (const b of bullets) {
-              const wrapped = wrapText(b, 18);
-              slide.addText(`• ${wrapped}`, {
+              slide.addText(`• ${b}`, {
                 x: margin + 0.7,
                 y: y,
                 w: contentWidth - 1.0,
-                h: 0.8,
+                h: 0.5,
                 fontSize: 13,
                 fontFace: "Microsoft YaHei",
                 color: colors.ink,
                 valign: "top",
-                lineSpacing: 1.4,
-                wrap: false,
+                lineSpacing: 1.5,
+                wrap: true,
               });
-              y += 0.9;
+              y += 0.55;
             }
             y += 0.2;
           }
@@ -612,20 +573,19 @@ async function generateStackedLayout(
             y += 0.6;
             const introText = safeText(proj.intro);
             if (introText) {
-              const wrapped = wrapText(introText, 18);
-              slide.addText(wrapped, {
+              slide.addText(introText, {
                 x: margin + 0.7,
                 y: y,
                 w: contentWidth - 1.0,
-                h: 0.8,
+                h: 0.5,
                 fontSize: 13,
                 fontFace: "Microsoft YaHei",
                 color: colors.ink,
                 valign: "top",
-                lineSpacing: 1.4,
-                wrap: false,
+                lineSpacing: 1.5,
+                wrap: true,
               });
-              y += 0.9;
+              y += 0.55;
             }
             y += 0.2;
           }
@@ -710,7 +670,7 @@ async function generateStackedLayout(
           addSectionTitle(pptx, slide, "自我评价", margin, y, contentWidth, colors);
           y += 0.7;
           addTextBlock(slide, text, margin + 0.2, y, contentWidth - 0.4, colors);
-          y += 2.2;
+          y += 1.9;
         }
         break;
       }
@@ -719,7 +679,7 @@ async function generateStackedLayout(
 }
 
 // ============================================================
-// 辅助函数
+// 辅助函数（字体、大小、行距已优化）
 // ============================================================
 function addSectionTitle(pptx: PptxGenJS, slide: any, title: string, x: number, y: number, width: number, colors: any) {
   slide.addText(title, {
@@ -741,18 +701,18 @@ function addSectionTitle(pptx: PptxGenJS, slide: any, title: string, x: number, 
   });
 }
 
+// 关键修正：高度增加到 1.8，强制换行，行距 1.5
 function addTextBlock(slide: any, text: string, x: number, y: number, width: number, colors: any) {
-  const wrapped = wrapText(text, 18);
-  slide.addText(wrapped, {
+  slide.addText(text, {
     x: x,
     y: y,
     w: width,
-    h: 2.0,
+    h: 1.8,
     fontSize: 14,
     fontFace: "Microsoft YaHei",
     color: colors.ink,
     valign: "top",
     lineSpacing: 1.5,
-    wrap: false,
+    wrap: true,
   });
 }
