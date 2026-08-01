@@ -201,7 +201,7 @@ export default function Page() {
       />
 
       {/* JD 输入框（可折叠） */}
-      <div className="mx-auto max-w-[1600px] px-4 py-2 sm:px-6">
+      <div className="jd-input-container mx-auto max-w-[1600px] px-4 py-2 sm:px-6">
         <div className="rounded-lg border border-border bg-background p-2">
           <button
             type="button"
