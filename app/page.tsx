@@ -225,18 +225,19 @@ export default function Page() {
       </div>
 
       <main className="mx-auto flex max-w-[1600px] flex-col gap-6 p-4 sm:p-6 lg:flex-row">
-        <section className="no-print w-full min-w-0 lg:w-[440px] lg:shrink-0">
-          <div className="lg:sticky lg:top-20 lg:max-h-[calc(100vh-6rem)] lg:overflow-y-auto lg:pr-2">
-            <EditPanel
-              data={data}
-              setData={setData}
-              sections={sections}
-              lang={lang}
-              showPhoto={showPhoto}
-              onTogglePhoto={setShowPhoto}
-              onReorder={reorder}
-              onToggle={toggle}
-            />
+        <section className="print-region min-w-0 flex-1 w-full max-w-full overflow-x-auto">
+          <div className="w-full min-w-[340px] sm:min-w-0">
+            <PreviewFrame>
+              <ResumePreview
+                data={data}
+                theme={theme}
+                sections={sections}
+                lang={lang}
+                layout={layout}
+                fontScale={fontScale}
+                showPhoto={showPhoto}
+              />
+            </PreviewFrame>
           </div>
         </section>
 
