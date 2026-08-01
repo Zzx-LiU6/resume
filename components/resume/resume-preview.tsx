@@ -337,7 +337,7 @@ export function ResumePreview({
   // ---- Split two-column layout: sidebar (personal + photo) | sections ----
   if (layout === "split") {
     return (
-      <div className="resume-paper mx-auto flex shadow-lg" style={cssVars}>
+      <div id="resume-preview" className="resume-paper mx-auto flex shadow-lg" style={cssVars}>
         <aside
           className="resume-entry flex shrink-0 flex-col gap-3 px-[10mm] py-[14mm]"
           style={{ width: "62mm", background: "var(--tag-bg)" }}
@@ -369,7 +369,7 @@ export function ResumePreview({
 
   // ---- Single vertical layout: header on top, sections stacked ----
   return (
-    <div className="resume-paper mx-auto px-[16mm] py-[14mm] shadow-lg" style={cssVars}>
+    <div id="resume-preview" className="resume-paper mx-auto px-[16mm] py-[14mm] shadow-lg" style={cssVars}>
       <header className="resume-entry flex items-start gap-4 border-b pb-3" style={{ borderColor: "var(--line)" }}>
         {Photo}
         <div className="min-w-0 flex-1">
