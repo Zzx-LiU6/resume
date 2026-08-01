@@ -222,8 +222,68 @@
     page-break-inside: avoid;
   }
 }
+/* ===== 打印样式：只显示简历预览区 ===== */
 @media print {
-  .jd-input-container {
+  /* 隐藏所有非打印元素 */
+  .no-print {
+    display: none !important;
+  }
+
+  /* 隐藏 JD 输入框区域（如果有独立类名） */
+  .jd-input-area {
+    display: none !important;
+  }
+
+  /* 隐藏工具栏 */
+  header.no-print {
+    display: none !important;
+  }
+
+  /* 隐藏页脚、时间、网站名等 */
+  footer,
+  .print-footer,
+  .timestamp {
+    display: none !important;
+  }
+
+  /* 确保简历预览区占满整页 */
+  .print-region {
+    display: block !important;
+    width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    overflow: visible !important;
+  }
+
+  /* 重置打印边距 */
+  @page {
+    margin: 0.5cm;
+  }
+
+  /* 确保 resume-paper 在打印时完整显示 */
+  #resume-preview,
+  .resume-paper {
+    width: 100% !important;
+    min-height: auto !important;
+    box-shadow: none !important;
+    transform: none !important;
+    margin: 0 auto !important;
+    background: white !important;
+  }
+
+  /* 强制背景色和文字颜色为黑白打印友好 */
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* 隐藏所有滚动条 */
+  ::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* 隐藏任何额外的调试信息 */
+  .debug-info {
     display: none !important;
   }
 }
