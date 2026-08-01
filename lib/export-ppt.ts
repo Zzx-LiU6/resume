@@ -19,6 +19,7 @@ function hasSectionContent(data: ResumeData, type: string): boolean {
     case "skills": return data.skills?.some(s => safeText(s.name)) ?? false;
     case "awards": return data.awards?.some(a => safeText(a.name)) ?? false;
     case "evaluation": return !!safeText(data.evaluation);
+    case "campus": return data.campus?.some(j => safeText(j.org)) ?? false;
     default: return false;
   }
 }
@@ -123,7 +124,7 @@ async function generateSplitLayout(
     sideY += 1.1;
   }
 
-  // ===== 侧边栏：联系方式 =====
+  // ===== 侧边栏：联系方式（字体 20pt） =====
   const contactItems = [
     { icon: "📞", text: p.phone },
     { icon: "✉️", text: p.email },
@@ -172,35 +173,48 @@ async function generateSplitLayout(
             const org = safeText(job.org);
             if (!org) continue;
             const role = safeText(job.role);
-            const header = role ? `${org} · ${role}` : org;
-            // 公司 + 职位
-            slide.addText(header, {
+            const start = safeText(job.start);
+            const end = job.untilNow ? "至今" : safeText(job.end);
+            const timeStr = (start || end) ? `${start || ""} - ${end || ""}` : "";
+
+            // 公司名（左对齐，加粗）
+            slide.addText(org, {
               x: contentX + 0.2,
               y: y,
-              w: contentWidth - 0.4,
-              h: 0.6,
+              w: contentWidth * 0.45,
+              h: 0.7,
               fontSize: 18,
               fontFace: "Microsoft YaHei",
               color: colors.ink,
               bold: true,
             });
-            y += 0.6;
-            // 时间（单独一行）
-            const time = (job.start || job.end) ? `${job.start || ''} - ${job.end || ''}` : '';
-            if (time) {
-              slide.addText(time, {
-                x: contentX + 0.4,
+            // 职位（居中，不加粗）
+            if (role) {
+              slide.addText(role, {
+                x: contentX + 0.2 + contentWidth * 0.45 + 0.1,
                 y: y,
-                w: contentWidth - 0.6,
-                h: 0.4,
-                fontSize: 14,
+                w: contentWidth * 0.25,
+                h: 0.7,
+                fontSize: 18,
+                fontFace: "Microsoft YaHei",
+                color: colors.ink,
+              });
+            }
+            // 时间（右对齐，不加粗）
+            if (timeStr) {
+              slide.addText(timeStr, {
+                x: contentX + contentWidth - 1.4,
+                y: y,
+                w: 1.4,
+                h: 0.7,
+                fontSize: 18,
                 fontFace: "Microsoft YaHei",
                 color: colors.subtle,
-                valign: "top",
+                align: "right",
               });
-              y += 0.4;
             }
-            // bullets
+            y += 0.7;
+
             const bullets = (job.bullets || []).map(safeText).filter(b => b);
             for (const b of bullets) {
               slide.addText(`• ${b}`, {
@@ -228,32 +242,45 @@ async function generateSplitLayout(
             const org = safeText(job.org);
             if (!org) continue;
             const role = safeText(job.role);
-            const header = role ? `${org} · ${role}` : org;
-            slide.addText(header, {
+            const start = safeText(job.start);
+            const end = job.untilNow ? "至今" : safeText(job.end);
+            const timeStr = (start || end) ? `${start || ""} - ${end || ""}` : "";
+
+            slide.addText(org, {
               x: contentX + 0.2,
               y: y,
-              w: contentWidth - 0.4,
-              h: 0.6,
+              w: contentWidth * 0.45,
+              h: 0.7,
               fontSize: 18,
               fontFace: "Microsoft YaHei",
               color: colors.ink,
               bold: true,
             });
-            y += 0.6;
-            const time = (job.start || job.end) ? `${job.start || ''} - ${job.end || ''}` : '';
-            if (time) {
-              slide.addText(time, {
-                x: contentX + 0.4,
+            if (role) {
+              slide.addText(role, {
+                x: contentX + 0.2 + contentWidth * 0.45 + 0.1,
                 y: y,
-                w: contentWidth - 0.6,
-                h: 0.4,
-                fontSize: 14,
+                w: contentWidth * 0.25,
+                h: 0.7,
+                fontSize: 18,
+                fontFace: "Microsoft YaHei",
+                color: colors.ink,
+              });
+            }
+            if (timeStr) {
+              slide.addText(timeStr, {
+                x: contentX + contentWidth - 1.4,
+                y: y,
+                w: 1.4,
+                h: 0.7,
+                fontSize: 18,
                 fontFace: "Microsoft YaHei",
                 color: colors.subtle,
-                valign: "top",
+                align: "right",
               });
-              y += 0.4;
             }
+            y += 0.7;
+
             const bullets = (job.bullets || []).map(safeText).filter(b => b);
             for (const b of bullets) {
               slide.addText(`• ${b}`, {
@@ -281,32 +308,45 @@ async function generateSplitLayout(
             const name = safeText(proj.name);
             if (!name) continue;
             const role = safeText(proj.role);
-            const header = role ? `${name} · ${role}` : name;
-            slide.addText(header, {
+            const start = safeText(proj.start);
+            const end = proj.untilNow ? "至今" : safeText(proj.end);
+            const timeStr = (start || end) ? `${start || ""} - ${end || ""}` : "";
+
+            slide.addText(name, {
               x: contentX + 0.2,
               y: y,
-              w: contentWidth - 0.4,
-              h: 0.6,
+              w: contentWidth * 0.45,
+              h: 0.7,
               fontSize: 18,
               fontFace: "Microsoft YaHei",
               color: colors.ink,
               bold: true,
             });
-            y += 0.6;
-            const time = (proj.start || proj.end) ? `${proj.start || ''} - ${proj.end || ''}` : '';
-            if (time) {
-              slide.addText(time, {
-                x: contentX + 0.4,
+            if (role) {
+              slide.addText(role, {
+                x: contentX + 0.2 + contentWidth * 0.45 + 0.1,
                 y: y,
-                w: contentWidth - 0.6,
-                h: 0.4,
-                fontSize: 14,
+                w: contentWidth * 0.25,
+                h: 0.7,
+                fontSize: 18,
+                fontFace: "Microsoft YaHei",
+                color: colors.ink,
+              });
+            }
+            if (timeStr) {
+              slide.addText(timeStr, {
+                x: contentX + contentWidth - 1.4,
+                y: y,
+                w: 1.4,
+                h: 0.7,
+                fontSize: 18,
                 fontFace: "Microsoft YaHei",
                 color: colors.subtle,
-                valign: "top",
+                align: "right",
               });
-              y += 0.4;
             }
+            y += 0.7;
+
             const introText = safeText(proj.intro);
             if (introText) {
               slide.addText(introText, {
@@ -348,63 +388,133 @@ async function generateSplitLayout(
             if (!school) continue;
             const major = safeText(edu.major);
             const degree = safeText(edu.degree);
-            let header = school;
-            if (major) header += ` · ${major}`;
-            if (degree) header += ` · ${degree}`;
-            slide.addText(header, {
+            const start = safeText(edu.start);
+            const end = edu.untilNow ? "至今" : safeText(edu.end);
+            const timeStr = (start || end) ? `${start || ""} - ${end || ""}` : "";
+
+            // 学校名
+            let schoolText = school;
+            if (major) schoolText += ` · ${major}`;
+            if (degree) schoolText += ` · ${degree}`;
+            slide.addText(schoolText, {
               x: contentX + 0.2,
               y: y,
-              w: contentWidth - 0.4,
-              h: 0.6,
+              w: contentWidth * 0.6,
+              h: 0.7,
               fontSize: 18,
               fontFace: "Microsoft YaHei",
               color: colors.ink,
               bold: true,
             });
-            y += 0.6;
-            const time = (edu.start || edu.end) ? `${edu.start || ''} - ${edu.end || ''}` : '';
-            if (time) {
-              slide.addText(time, {
-                x: contentX + 0.4,
+            if (timeStr) {
+              slide.addText(timeStr, {
+                x: contentX + contentWidth - 1.4,
                 y: y,
-                w: contentWidth - 0.6,
-                h: 0.4,
-                fontSize: 14,
+                w: 1.4,
+                h: 0.7,
+                fontSize: 18,
                 fontFace: "Microsoft YaHei",
                 color: colors.subtle,
-                valign: "top",
+                align: "right",
               });
-              y += 0.4;
             }
+            y += 0.7;
+
             if (edu.gpa) {
               slide.addText(`GPA：${edu.gpa}`, {
                 x: contentX + 0.5,
                 y: y,
                 w: contentWidth - 0.7,
-                h: 0.4,
-                fontSize: 14,
+                h: 0.5,
+                fontSize: 16,
                 fontFace: "Microsoft YaHei",
                 color: colors.subtle,
                 valign: "top",
               });
-              y += 0.4;
+              y += 0.5;
             }
             if (edu.courses) {
               slide.addText(`主修课程：${edu.courses}`, {
                 x: contentX + 0.5,
                 y: y,
                 w: contentWidth - 0.7,
-                h: 0.4,
-                fontSize: 14,
+                h: 0.5,
+                fontSize: 16,
                 fontFace: "Microsoft YaHei",
                 color: colors.subtle,
                 valign: "top",
               });
-              y += 0.4;
+              y += 0.5;
             }
             y += 0.2;
           }
           y += 0.3;
+        }
+        break;
+      }
+      case "campus": {
+        if (data.campus?.some(j => safeText(j.org))) {
+          addSectionTitle(pptx, slide, "校园经历", contentX, y, contentWidth, colors);
+          y += 0.8;
+          for (const item of data.campus) {
+            const org = safeText(item.org);
+            if (!org) continue;
+            const role = safeText(item.role);
+            const start = safeText(item.start);
+            const end = item.untilNow ? "至今" : safeText(item.end);
+            const timeStr = (start || end) ? `${start || ""} - ${end || ""}` : "";
+
+            slide.addText(org, {
+              x: contentX + 0.2,
+              y: y,
+              w: contentWidth * 0.45,
+              h: 0.7,
+              fontSize: 18,
+              fontFace: "Microsoft YaHei",
+              color: colors.ink,
+              bold: true,
+            });
+            if (role) {
+              slide.addText(role, {
+                x: contentX + 0.2 + contentWidth * 0.45 + 0.1,
+                y: y,
+                w: contentWidth * 0.25,
+                h: 0.7,
+                fontSize: 18,
+                fontFace: "Microsoft YaHei",
+                color: colors.ink,
+              });
+            }
+            if (timeStr) {
+              slide.addText(timeStr, {
+                x: contentX + contentWidth - 1.4,
+                y: y,
+                w: 1.4,
+                h: 0.7,
+                fontSize: 18,
+                fontFace: "Microsoft YaHei",
+                color: colors.subtle,
+                align: "right",
+              });
+            }
+            y += 0.7;
+
+            const bullets = (item.bullets || []).map(safeText).filter(b => b);
+            for (const b of bullets) {
+              slide.addText(`• ${b}`, {
+                x: contentX + 0.7,
+                y: y,
+                w: contentWidth - 1.0,
+                h: 0.6,
+                fontSize: 16,
+                fontFace: "Microsoft YaHei",
+                color: colors.ink,
+                valign: "top",
+              });
+              y += 0.6;
+            }
+            y += 0.3;
+          }
         }
         break;
       }
@@ -441,27 +551,26 @@ async function generateSplitLayout(
             slide.addText(text, {
               x: contentX + 0.2,
               y: y,
-              w: contentWidth - 0.4,
+              w: contentWidth - 1.6,
               h: 0.6,
-              fontSize: 18,
+              fontSize: 16,
               fontFace: "Microsoft YaHei",
               color: colors.ink,
-              bold: true,
+              valign: "top",
             });
-            y += 0.6;
             if (date) {
               slide.addText(date, {
-                x: contentX + 0.4,
+                x: contentX + contentWidth - 1.4,
                 y: y,
-                w: contentWidth - 0.6,
-                h: 0.4,
-                fontSize: 14,
+                w: 1.4,
+                h: 0.6,
+                fontSize: 16,
                 fontFace: "Microsoft YaHei",
                 color: colors.subtle,
-                valign: "top",
+                align: "right",
               });
-              y += 0.4;
             }
+            y += 0.6;
           }
           y += 0.3;
         }
@@ -482,7 +591,7 @@ async function generateSplitLayout(
 }
 
 // ============================================================
-// 单栏布局
+// 单栏布局（逻辑与分栏一致，仅位置参数不同）
 // ============================================================
 async function generateStackedLayout(
   pptx: PptxGenJS,
@@ -569,7 +678,7 @@ async function generateStackedLayout(
   });
   y += 0.7;
 
-  // ===== 内容区（与分栏逻辑相同，坐标用 margin） =====
+  // ===== 内容区 =====
   for (const sec of sections) {
     const type = sec.type;
     switch (type) {
@@ -591,32 +700,45 @@ async function generateStackedLayout(
             const org = safeText(job.org);
             if (!org) continue;
             const role = safeText(job.role);
-            const header = role ? `${org} · ${role}` : org;
-            slide.addText(header, {
+            const start = safeText(job.start);
+            const end = job.untilNow ? "至今" : safeText(job.end);
+            const timeStr = (start || end) ? `${start || ""} - ${end || ""}` : "";
+
+            slide.addText(org, {
               x: margin + 0.2,
               y: y,
-              w: contentWidth - 0.4,
-              h: 0.6,
+              w: contentWidth * 0.45,
+              h: 0.7,
               fontSize: 18,
               fontFace: "Microsoft YaHei",
               color: colors.ink,
               bold: true,
             });
-            y += 0.6;
-            const time = (job.start || job.end) ? `${job.start || ''} - ${job.end || ''}` : '';
-            if (time) {
-              slide.addText(time, {
-                x: margin + 0.4,
+            if (role) {
+              slide.addText(role, {
+                x: margin + 0.2 + contentWidth * 0.45 + 0.1,
                 y: y,
-                w: contentWidth - 0.6,
-                h: 0.4,
-                fontSize: 14,
+                w: contentWidth * 0.25,
+                h: 0.7,
+                fontSize: 18,
+                fontFace: "Microsoft YaHei",
+                color: colors.ink,
+              });
+            }
+            if (timeStr) {
+              slide.addText(timeStr, {
+                x: margin + contentWidth - 1.4,
+                y: y,
+                w: 1.4,
+                h: 0.7,
+                fontSize: 18,
                 fontFace: "Microsoft YaHei",
                 color: colors.subtle,
-                valign: "top",
+                align: "right",
               });
-              y += 0.4;
             }
+            y += 0.7;
+
             const bullets = (job.bullets || []).map(safeText).filter(b => b);
             for (const b of bullets) {
               slide.addText(`• ${b}`, {
@@ -644,32 +766,45 @@ async function generateStackedLayout(
             const org = safeText(job.org);
             if (!org) continue;
             const role = safeText(job.role);
-            const header = role ? `${org} · ${role}` : org;
-            slide.addText(header, {
+            const start = safeText(job.start);
+            const end = job.untilNow ? "至今" : safeText(job.end);
+            const timeStr = (start || end) ? `${start || ""} - ${end || ""}` : "";
+
+            slide.addText(org, {
               x: margin + 0.2,
               y: y,
-              w: contentWidth - 0.4,
-              h: 0.6,
+              w: contentWidth * 0.45,
+              h: 0.7,
               fontSize: 18,
               fontFace: "Microsoft YaHei",
               color: colors.ink,
               bold: true,
             });
-            y += 0.6;
-            const time = (job.start || job.end) ? `${job.start || ''} - ${job.end || ''}` : '';
-            if (time) {
-              slide.addText(time, {
-                x: margin + 0.4,
+            if (role) {
+              slide.addText(role, {
+                x: margin + 0.2 + contentWidth * 0.45 + 0.1,
                 y: y,
-                w: contentWidth - 0.6,
-                h: 0.4,
-                fontSize: 14,
+                w: contentWidth * 0.25,
+                h: 0.7,
+                fontSize: 18,
+                fontFace: "Microsoft YaHei",
+                color: colors.ink,
+              });
+            }
+            if (timeStr) {
+              slide.addText(timeStr, {
+                x: margin + contentWidth - 1.4,
+                y: y,
+                w: 1.4,
+                h: 0.7,
+                fontSize: 18,
                 fontFace: "Microsoft YaHei",
                 color: colors.subtle,
-                valign: "top",
+                align: "right",
               });
-              y += 0.4;
             }
+            y += 0.7;
+
             const bullets = (job.bullets || []).map(safeText).filter(b => b);
             for (const b of bullets) {
               slide.addText(`• ${b}`, {
@@ -697,32 +832,45 @@ async function generateStackedLayout(
             const name = safeText(proj.name);
             if (!name) continue;
             const role = safeText(proj.role);
-            const header = role ? `${name} · ${role}` : name;
-            slide.addText(header, {
+            const start = safeText(proj.start);
+            const end = proj.untilNow ? "至今" : safeText(proj.end);
+            const timeStr = (start || end) ? `${start || ""} - ${end || ""}` : "";
+
+            slide.addText(name, {
               x: margin + 0.2,
               y: y,
-              w: contentWidth - 0.4,
-              h: 0.6,
+              w: contentWidth * 0.45,
+              h: 0.7,
               fontSize: 18,
               fontFace: "Microsoft YaHei",
               color: colors.ink,
               bold: true,
             });
-            y += 0.6;
-            const time = (proj.start || proj.end) ? `${proj.start || ''} - ${proj.end || ''}` : '';
-            if (time) {
-              slide.addText(time, {
-                x: margin + 0.4,
+            if (role) {
+              slide.addText(role, {
+                x: margin + 0.2 + contentWidth * 0.45 + 0.1,
                 y: y,
-                w: contentWidth - 0.6,
-                h: 0.4,
-                fontSize: 14,
+                w: contentWidth * 0.25,
+                h: 0.7,
+                fontSize: 18,
+                fontFace: "Microsoft YaHei",
+                color: colors.ink,
+              });
+            }
+            if (timeStr) {
+              slide.addText(timeStr, {
+                x: margin + contentWidth - 1.4,
+                y: y,
+                w: 1.4,
+                h: 0.7,
+                fontSize: 18,
                 fontFace: "Microsoft YaHei",
                 color: colors.subtle,
-                valign: "top",
+                align: "right",
               });
-              y += 0.4;
             }
+            y += 0.7;
+
             const introText = safeText(proj.intro);
             if (introText) {
               slide.addText(introText, {
@@ -764,63 +912,132 @@ async function generateStackedLayout(
             if (!school) continue;
             const major = safeText(edu.major);
             const degree = safeText(edu.degree);
-            let header = school;
-            if (major) header += ` · ${major}`;
-            if (degree) header += ` · ${degree}`;
-            slide.addText(header, {
+            const start = safeText(edu.start);
+            const end = edu.untilNow ? "至今" : safeText(edu.end);
+            const timeStr = (start || end) ? `${start || ""} - ${end || ""}` : "";
+
+            let schoolText = school;
+            if (major) schoolText += ` · ${major}`;
+            if (degree) schoolText += ` · ${degree}`;
+            slide.addText(schoolText, {
               x: margin + 0.2,
               y: y,
-              w: contentWidth - 0.4,
-              h: 0.6,
+              w: contentWidth * 0.6,
+              h: 0.7,
               fontSize: 18,
               fontFace: "Microsoft YaHei",
               color: colors.ink,
               bold: true,
             });
-            y += 0.6;
-            const time = (edu.start || edu.end) ? `${edu.start || ''} - ${edu.end || ''}` : '';
-            if (time) {
-              slide.addText(time, {
-                x: margin + 0.4,
+            if (timeStr) {
+              slide.addText(timeStr, {
+                x: margin + contentWidth - 1.4,
                 y: y,
-                w: contentWidth - 0.6,
-                h: 0.4,
-                fontSize: 14,
+                w: 1.4,
+                h: 0.7,
+                fontSize: 18,
                 fontFace: "Microsoft YaHei",
                 color: colors.subtle,
-                valign: "top",
+                align: "right",
               });
-              y += 0.4;
             }
+            y += 0.7;
+
             if (edu.gpa) {
               slide.addText(`GPA：${edu.gpa}`, {
                 x: margin + 0.5,
                 y: y,
                 w: contentWidth - 0.7,
-                h: 0.4,
-                fontSize: 14,
+                h: 0.5,
+                fontSize: 16,
                 fontFace: "Microsoft YaHei",
                 color: colors.subtle,
                 valign: "top",
               });
-              y += 0.4;
+              y += 0.5;
             }
             if (edu.courses) {
               slide.addText(`主修课程：${edu.courses}`, {
                 x: margin + 0.5,
                 y: y,
                 w: contentWidth - 0.7,
-                h: 0.4,
-                fontSize: 14,
+                h: 0.5,
+                fontSize: 16,
                 fontFace: "Microsoft YaHei",
                 color: colors.subtle,
                 valign: "top",
               });
-              y += 0.4;
+              y += 0.5;
             }
             y += 0.2;
           }
           y += 0.3;
+        }
+        break;
+      }
+      case "campus": {
+        if (data.campus?.some(j => safeText(j.org))) {
+          addSectionTitle(pptx, slide, "校园经历", margin, y, contentWidth, colors);
+          y += 0.8;
+          for (const item of data.campus) {
+            const org = safeText(item.org);
+            if (!org) continue;
+            const role = safeText(item.role);
+            const start = safeText(item.start);
+            const end = item.untilNow ? "至今" : safeText(item.end);
+            const timeStr = (start || end) ? `${start || ""} - ${end || ""}` : "";
+
+            slide.addText(org, {
+              x: margin + 0.2,
+              y: y,
+              w: contentWidth * 0.45,
+              h: 0.7,
+              fontSize: 18,
+              fontFace: "Microsoft YaHei",
+              color: colors.ink,
+              bold: true,
+            });
+            if (role) {
+              slide.addText(role, {
+                x: margin + 0.2 + contentWidth * 0.45 + 0.1,
+                y: y,
+                w: contentWidth * 0.25,
+                h: 0.7,
+                fontSize: 18,
+                fontFace: "Microsoft YaHei",
+                color: colors.ink,
+              });
+            }
+            if (timeStr) {
+              slide.addText(timeStr, {
+                x: margin + contentWidth - 1.4,
+                y: y,
+                w: 1.4,
+                h: 0.7,
+                fontSize: 18,
+                fontFace: "Microsoft YaHei",
+                color: colors.subtle,
+                align: "right",
+              });
+            }
+            y += 0.7;
+
+            const bullets = (item.bullets || []).map(safeText).filter(b => b);
+            for (const b of bullets) {
+              slide.addText(`• ${b}`, {
+                x: margin + 0.7,
+                y: y,
+                w: contentWidth - 1.0,
+                h: 0.6,
+                fontSize: 16,
+                fontFace: "Microsoft YaHei",
+                color: colors.ink,
+                valign: "top",
+              });
+              y += 0.6;
+            }
+            y += 0.3;
+          }
         }
         break;
       }
@@ -857,27 +1074,26 @@ async function generateStackedLayout(
             slide.addText(text, {
               x: margin + 0.2,
               y: y,
-              w: contentWidth - 0.4,
+              w: contentWidth - 1.6,
               h: 0.6,
-              fontSize: 18,
+              fontSize: 16,
               fontFace: "Microsoft YaHei",
               color: colors.ink,
-              bold: true,
+              valign: "top",
             });
-            y += 0.6;
             if (date) {
               slide.addText(date, {
-                x: margin + 0.4,
+                x: margin + contentWidth - 1.4,
                 y: y,
-                w: contentWidth - 0.6,
-                h: 0.4,
-                fontSize: 14,
+                w: 1.4,
+                h: 0.6,
+                fontSize: 16,
                 fontFace: "Microsoft YaHei",
                 color: colors.subtle,
-                valign: "top",
+                align: "right",
               });
-              y += 0.4;
             }
+            y += 0.6;
           }
           y += 0.3;
         }
