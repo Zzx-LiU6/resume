@@ -90,7 +90,7 @@ async function generateSplitLayout(
   let sideY = margin + 0.8;
   const p = data.personal;
 
-  // ===== 侧边栏：姓名 =====
+  // ===== 侧边栏：姓名（黑色） =====
   const name = safeText(p.fullName);
   if (name) {
     slide.addText(name, {
@@ -107,7 +107,7 @@ async function generateSplitLayout(
     sideY += 1.9;
   }
 
-  // ===== 侧边栏：求职意向 =====
+  // ===== 侧边栏：求职意向（黑色） =====
   const jobIntention = safeText(p.jobIntention);
   if (jobIntention) {
     slide.addText(jobIntention, {
@@ -117,14 +117,14 @@ async function generateSplitLayout(
       h: 0.9,
       fontSize: 24,
       fontFace: "Microsoft YaHei",
-      color: colors.accent,
+      color: colors.ink,
       align: "center",
       bold: true,
     });
     sideY += 1.1;
   }
 
-  // ===== 侧边栏：联系方式（字体 20pt） =====
+  // ===== 侧边栏：联系方式（黑色） =====
   const contactItems = [
     { icon: "📞", text: p.phone },
     { icon: "✉️", text: p.email },
@@ -142,7 +142,7 @@ async function generateSplitLayout(
         h: 0.7,
         fontSize: 20,
         fontFace: "Microsoft YaHei",
-        color: colors.subtle,
+        color: colors.ink,
         align: "center",
       });
       sideY += 0.7;
@@ -177,21 +177,21 @@ async function generateSplitLayout(
             const end = job.untilNow ? "至今" : safeText(job.end);
             const timeStr = (start || end) ? `${start || ""} - ${end || ""}` : "";
 
-            // 公司名（左对齐，加粗）
+            // 公司名（黑色，加粗）
             slide.addText(org, {
               x: contentX + 0.2,
               y: y,
-              w: contentWidth * 0.45,
+              w: contentWidth * 0.40,
               h: 0.7,
               fontSize: 18,
               fontFace: "Microsoft YaHei",
               color: colors.ink,
               bold: true,
             });
-            // 职位（居中，不加粗）
+            // 职位（黑色）
             if (role) {
               slide.addText(role, {
-                x: contentX + 0.2 + contentWidth * 0.45 + 0.1,
+                x: contentX + 0.2 + contentWidth * 0.40 + 0.1,
                 y: y,
                 w: contentWidth * 0.25,
                 h: 0.7,
@@ -200,16 +200,16 @@ async function generateSplitLayout(
                 color: colors.ink,
               });
             }
-            // 时间（右对齐，不加粗）
+            // 时间（黑色，右对齐，文本框加宽到 2.4）
             if (timeStr) {
               slide.addText(timeStr, {
-                x: contentX + contentWidth - 1.4,
+                x: contentX + contentWidth - 2.4,
                 y: y,
-                w: 1.4,
+                w: 2.4,
                 h: 0.7,
                 fontSize: 18,
                 fontFace: "Microsoft YaHei",
-                color: colors.subtle,
+                color: colors.ink,
                 align: "right",
               });
             }
@@ -249,7 +249,7 @@ async function generateSplitLayout(
             slide.addText(org, {
               x: contentX + 0.2,
               y: y,
-              w: contentWidth * 0.45,
+              w: contentWidth * 0.40,
               h: 0.7,
               fontSize: 18,
               fontFace: "Microsoft YaHei",
@@ -258,7 +258,7 @@ async function generateSplitLayout(
             });
             if (role) {
               slide.addText(role, {
-                x: contentX + 0.2 + contentWidth * 0.45 + 0.1,
+                x: contentX + 0.2 + contentWidth * 0.40 + 0.1,
                 y: y,
                 w: contentWidth * 0.25,
                 h: 0.7,
@@ -269,13 +269,13 @@ async function generateSplitLayout(
             }
             if (timeStr) {
               slide.addText(timeStr, {
-                x: contentX + contentWidth - 1.4,
+                x: contentX + contentWidth - 2.4,
                 y: y,
-                w: 1.4,
+                w: 2.4,
                 h: 0.7,
                 fontSize: 18,
                 fontFace: "Microsoft YaHei",
-                color: colors.subtle,
+                color: colors.ink,
                 align: "right",
               });
             }
@@ -315,7 +315,7 @@ async function generateSplitLayout(
             slide.addText(name, {
               x: contentX + 0.2,
               y: y,
-              w: contentWidth * 0.45,
+              w: contentWidth * 0.40,
               h: 0.7,
               fontSize: 18,
               fontFace: "Microsoft YaHei",
@@ -324,7 +324,7 @@ async function generateSplitLayout(
             });
             if (role) {
               slide.addText(role, {
-                x: contentX + 0.2 + contentWidth * 0.45 + 0.1,
+                x: contentX + 0.2 + contentWidth * 0.40 + 0.1,
                 y: y,
                 w: contentWidth * 0.25,
                 h: 0.7,
@@ -335,13 +335,13 @@ async function generateSplitLayout(
             }
             if (timeStr) {
               slide.addText(timeStr, {
-                x: contentX + contentWidth - 1.4,
+                x: contentX + contentWidth - 2.4,
                 y: y,
-                w: 1.4,
+                w: 2.4,
                 h: 0.7,
                 fontSize: 18,
                 fontFace: "Microsoft YaHei",
-                color: colors.subtle,
+                color: colors.ink,
                 align: "right",
               });
             }
@@ -369,7 +369,7 @@ async function generateSplitLayout(
                 h: 0.6,
                 fontSize: 16,
                 fontFace: "Microsoft YaHei",
-                color: colors.subtle,
+                color: colors.ink,
                 valign: "top",
               });
               y += 0.6;
@@ -392,14 +392,13 @@ async function generateSplitLayout(
             const end = edu.untilNow ? "至今" : safeText(edu.end);
             const timeStr = (start || end) ? `${start || ""} - ${end || ""}` : "";
 
-            // 学校名
             let schoolText = school;
             if (major) schoolText += ` · ${major}`;
             if (degree) schoolText += ` · ${degree}`;
             slide.addText(schoolText, {
               x: contentX + 0.2,
               y: y,
-              w: contentWidth * 0.6,
+              w: contentWidth * 0.50,
               h: 0.7,
               fontSize: 18,
               fontFace: "Microsoft YaHei",
@@ -408,13 +407,13 @@ async function generateSplitLayout(
             });
             if (timeStr) {
               slide.addText(timeStr, {
-                x: contentX + contentWidth - 1.4,
+                x: contentX + contentWidth - 2.4,
                 y: y,
-                w: 1.4,
+                w: 2.4,
                 h: 0.7,
                 fontSize: 18,
                 fontFace: "Microsoft YaHei",
-                color: colors.subtle,
+                color: colors.ink,
                 align: "right",
               });
             }
@@ -428,7 +427,7 @@ async function generateSplitLayout(
                 h: 0.5,
                 fontSize: 16,
                 fontFace: "Microsoft YaHei",
-                color: colors.subtle,
+                color: colors.ink,
                 valign: "top",
               });
               y += 0.5;
@@ -441,7 +440,7 @@ async function generateSplitLayout(
                 h: 0.5,
                 fontSize: 16,
                 fontFace: "Microsoft YaHei",
-                color: colors.subtle,
+                color: colors.ink,
                 valign: "top",
               });
               y += 0.5;
@@ -467,7 +466,7 @@ async function generateSplitLayout(
             slide.addText(org, {
               x: contentX + 0.2,
               y: y,
-              w: contentWidth * 0.45,
+              w: contentWidth * 0.40,
               h: 0.7,
               fontSize: 18,
               fontFace: "Microsoft YaHei",
@@ -476,7 +475,7 @@ async function generateSplitLayout(
             });
             if (role) {
               slide.addText(role, {
-                x: contentX + 0.2 + contentWidth * 0.45 + 0.1,
+                x: contentX + 0.2 + contentWidth * 0.40 + 0.1,
                 y: y,
                 w: contentWidth * 0.25,
                 h: 0.7,
@@ -487,13 +486,13 @@ async function generateSplitLayout(
             }
             if (timeStr) {
               slide.addText(timeStr, {
-                x: contentX + contentWidth - 1.4,
+                x: contentX + contentWidth - 2.4,
                 y: y,
-                w: 1.4,
+                w: 2.4,
                 h: 0.7,
                 fontSize: 18,
                 fontFace: "Microsoft YaHei",
-                color: colors.subtle,
+                color: colors.ink,
                 align: "right",
               });
             }
@@ -551,7 +550,7 @@ async function generateSplitLayout(
             slide.addText(text, {
               x: contentX + 0.2,
               y: y,
-              w: contentWidth - 1.6,
+              w: contentWidth - 2.6,
               h: 0.6,
               fontSize: 16,
               fontFace: "Microsoft YaHei",
@@ -560,13 +559,13 @@ async function generateSplitLayout(
             });
             if (date) {
               slide.addText(date, {
-                x: contentX + contentWidth - 1.4,
+                x: contentX + contentWidth - 2.4,
                 y: y,
-                w: 1.4,
+                w: 2.4,
                 h: 0.6,
                 fontSize: 16,
                 fontFace: "Microsoft YaHei",
-                color: colors.subtle,
+                color: colors.ink,
                 align: "right",
               });
             }
@@ -591,7 +590,7 @@ async function generateSplitLayout(
 }
 
 // ============================================================
-// 单栏布局（逻辑与分栏一致，仅位置参数不同）
+// 单栏布局
 // ============================================================
 async function generateStackedLayout(
   pptx: PptxGenJS,
@@ -607,7 +606,7 @@ async function generateStackedLayout(
   let y = margin;
   const p = data.personal;
 
-  // ===== 姓名 =====
+  // ===== 姓名（黑色） =====
   const name = safeText(p.fullName);
   if (name) {
     slide.addText(name, {
@@ -624,7 +623,7 @@ async function generateStackedLayout(
     y += 1.9;
   }
 
-  // ===== 求职意向 =====
+  // ===== 求职意向（黑色） =====
   const jobIntention = safeText(p.jobIntention);
   if (jobIntention) {
     slide.addText(jobIntention, {
@@ -634,14 +633,14 @@ async function generateStackedLayout(
       h: 0.9,
       fontSize: 24,
       fontFace: "Microsoft YaHei",
-      color: colors.accent,
+      color: colors.ink,
       align: "center",
       bold: true,
     });
     y += 1.1;
   }
 
-  // ===== 联系方式 =====
+  // ===== 联系方式（黑色） =====
   const contactItems = [
     { icon: "📞", text: p.phone },
     { icon: "✉️", text: p.email },
@@ -662,7 +661,7 @@ async function generateStackedLayout(
       h: 0.7,
       fontSize: 18,
       fontFace: "Microsoft YaHei",
-      color: colors.subtle,
+      color: colors.ink,
       align: "center",
     });
     y += 0.8;
@@ -707,7 +706,7 @@ async function generateStackedLayout(
             slide.addText(org, {
               x: margin + 0.2,
               y: y,
-              w: contentWidth * 0.45,
+              w: contentWidth * 0.40,
               h: 0.7,
               fontSize: 18,
               fontFace: "Microsoft YaHei",
@@ -716,7 +715,7 @@ async function generateStackedLayout(
             });
             if (role) {
               slide.addText(role, {
-                x: margin + 0.2 + contentWidth * 0.45 + 0.1,
+                x: margin + 0.2 + contentWidth * 0.40 + 0.1,
                 y: y,
                 w: contentWidth * 0.25,
                 h: 0.7,
@@ -727,13 +726,13 @@ async function generateStackedLayout(
             }
             if (timeStr) {
               slide.addText(timeStr, {
-                x: margin + contentWidth - 1.4,
+                x: margin + contentWidth - 2.4,
                 y: y,
-                w: 1.4,
+                w: 2.4,
                 h: 0.7,
                 fontSize: 18,
                 fontFace: "Microsoft YaHei",
-                color: colors.subtle,
+                color: colors.ink,
                 align: "right",
               });
             }
@@ -773,7 +772,7 @@ async function generateStackedLayout(
             slide.addText(org, {
               x: margin + 0.2,
               y: y,
-              w: contentWidth * 0.45,
+              w: contentWidth * 0.40,
               h: 0.7,
               fontSize: 18,
               fontFace: "Microsoft YaHei",
@@ -782,7 +781,7 @@ async function generateStackedLayout(
             });
             if (role) {
               slide.addText(role, {
-                x: margin + 0.2 + contentWidth * 0.45 + 0.1,
+                x: margin + 0.2 + contentWidth * 0.40 + 0.1,
                 y: y,
                 w: contentWidth * 0.25,
                 h: 0.7,
@@ -793,13 +792,13 @@ async function generateStackedLayout(
             }
             if (timeStr) {
               slide.addText(timeStr, {
-                x: margin + contentWidth - 1.4,
+                x: margin + contentWidth - 2.4,
                 y: y,
-                w: 1.4,
+                w: 2.4,
                 h: 0.7,
                 fontSize: 18,
                 fontFace: "Microsoft YaHei",
-                color: colors.subtle,
+                color: colors.ink,
                 align: "right",
               });
             }
@@ -839,7 +838,7 @@ async function generateStackedLayout(
             slide.addText(name, {
               x: margin + 0.2,
               y: y,
-              w: contentWidth * 0.45,
+              w: contentWidth * 0.40,
               h: 0.7,
               fontSize: 18,
               fontFace: "Microsoft YaHei",
@@ -848,7 +847,7 @@ async function generateStackedLayout(
             });
             if (role) {
               slide.addText(role, {
-                x: margin + 0.2 + contentWidth * 0.45 + 0.1,
+                x: margin + 0.2 + contentWidth * 0.40 + 0.1,
                 y: y,
                 w: contentWidth * 0.25,
                 h: 0.7,
@@ -859,13 +858,13 @@ async function generateStackedLayout(
             }
             if (timeStr) {
               slide.addText(timeStr, {
-                x: margin + contentWidth - 1.4,
+                x: margin + contentWidth - 2.4,
                 y: y,
-                w: 1.4,
+                w: 2.4,
                 h: 0.7,
                 fontSize: 18,
                 fontFace: "Microsoft YaHei",
-                color: colors.subtle,
+                color: colors.ink,
                 align: "right",
               });
             }
@@ -893,7 +892,7 @@ async function generateStackedLayout(
                 h: 0.6,
                 fontSize: 16,
                 fontFace: "Microsoft YaHei",
-                color: colors.subtle,
+                color: colors.ink,
                 valign: "top",
               });
               y += 0.6;
@@ -922,7 +921,7 @@ async function generateStackedLayout(
             slide.addText(schoolText, {
               x: margin + 0.2,
               y: y,
-              w: contentWidth * 0.6,
+              w: contentWidth * 0.50,
               h: 0.7,
               fontSize: 18,
               fontFace: "Microsoft YaHei",
@@ -931,13 +930,13 @@ async function generateStackedLayout(
             });
             if (timeStr) {
               slide.addText(timeStr, {
-                x: margin + contentWidth - 1.4,
+                x: margin + contentWidth - 2.4,
                 y: y,
-                w: 1.4,
+                w: 2.4,
                 h: 0.7,
                 fontSize: 18,
                 fontFace: "Microsoft YaHei",
-                color: colors.subtle,
+                color: colors.ink,
                 align: "right",
               });
             }
@@ -951,7 +950,7 @@ async function generateStackedLayout(
                 h: 0.5,
                 fontSize: 16,
                 fontFace: "Microsoft YaHei",
-                color: colors.subtle,
+                color: colors.ink,
                 valign: "top",
               });
               y += 0.5;
@@ -964,7 +963,7 @@ async function generateStackedLayout(
                 h: 0.5,
                 fontSize: 16,
                 fontFace: "Microsoft YaHei",
-                color: colors.subtle,
+                color: colors.ink,
                 valign: "top",
               });
               y += 0.5;
@@ -990,7 +989,7 @@ async function generateStackedLayout(
             slide.addText(org, {
               x: margin + 0.2,
               y: y,
-              w: contentWidth * 0.45,
+              w: contentWidth * 0.40,
               h: 0.7,
               fontSize: 18,
               fontFace: "Microsoft YaHei",
@@ -999,7 +998,7 @@ async function generateStackedLayout(
             });
             if (role) {
               slide.addText(role, {
-                x: margin + 0.2 + contentWidth * 0.45 + 0.1,
+                x: margin + 0.2 + contentWidth * 0.40 + 0.1,
                 y: y,
                 w: contentWidth * 0.25,
                 h: 0.7,
@@ -1010,13 +1009,13 @@ async function generateStackedLayout(
             }
             if (timeStr) {
               slide.addText(timeStr, {
-                x: margin + contentWidth - 1.4,
+                x: margin + contentWidth - 2.4,
                 y: y,
-                w: 1.4,
+                w: 2.4,
                 h: 0.7,
                 fontSize: 18,
                 fontFace: "Microsoft YaHei",
-                color: colors.subtle,
+                color: colors.ink,
                 align: "right",
               });
             }
@@ -1074,7 +1073,7 @@ async function generateStackedLayout(
             slide.addText(text, {
               x: margin + 0.2,
               y: y,
-              w: contentWidth - 1.6,
+              w: contentWidth - 2.6,
               h: 0.6,
               fontSize: 16,
               fontFace: "Microsoft YaHei",
@@ -1083,13 +1082,13 @@ async function generateStackedLayout(
             });
             if (date) {
               slide.addText(date, {
-                x: margin + contentWidth - 1.4,
+                x: margin + contentWidth - 2.4,
                 y: y,
-                w: 1.4,
+                w: 2.4,
                 h: 0.6,
                 fontSize: 16,
                 fontFace: "Microsoft YaHei",
-                color: colors.subtle,
+                color: colors.ink,
                 align: "right",
               });
             }
@@ -1124,7 +1123,7 @@ function addSectionTitle(pptx: PptxGenJS, slide: any, title: string, x: number, 
     h: 0.8,
     fontSize: 24,
     fontFace: "Microsoft YaHei",
-    color: colors.accent,
+    color: colors.ink,   // 黑色
     bold: true,
   });
   slide.addShape(pptx.ShapeType.rect, {
@@ -1152,7 +1151,7 @@ function addTextBlock(slide: any, text: string, x: number, y: number, width: num
       h: lineHeight,
       fontSize: 18,
       fontFace: "Microsoft YaHei",
-      color: colors.ink,
+      color: colors.ink,   // 黑色
       valign: "top",
     });
     currentY += lineHeight + lineSpacing;
