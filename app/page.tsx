@@ -81,9 +81,9 @@ export default function Page() {
   // 导出 PPT
   const handleExportPPT = () => {
     import("@/lib/export-ppt").then(({ exportToPPT }) => {
-      exportToPPT()
-    })
-  }
+      exportToPPT(data, layout);
+    });
+  };
 
   const rewriteWork = async () => {
     console.log("1. 按钮被点击了！")
