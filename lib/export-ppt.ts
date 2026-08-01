@@ -200,12 +200,12 @@ async function generateSplitLayout(
                 color: colors.ink,
               });
             }
-            // 时间（黑色，右对齐，文本框加宽到 2.4）
+            // 时间（黑色，右对齐，文本框加宽到 3.2）
             if (timeStr) {
               slide.addText(timeStr, {
-                x: contentX + contentWidth - 2.4,
+                x: contentX + contentWidth - 3.2,
                 y: y,
-                w: 2.4,
+                w: 3.2,
                 h: 0.7,
                 fontSize: 18,
                 fontFace: "Microsoft YaHei",
@@ -269,9 +269,9 @@ async function generateSplitLayout(
             }
             if (timeStr) {
               slide.addText(timeStr, {
-                x: contentX + contentWidth - 2.4,
+                x: contentX + contentWidth - 3.2,
                 y: y,
-                w: 2.4,
+                w: 3.2,
                 h: 0.7,
                 fontSize: 18,
                 fontFace: "Microsoft YaHei",
@@ -335,9 +335,9 @@ async function generateSplitLayout(
             }
             if (timeStr) {
               slide.addText(timeStr, {
-                x: contentX + contentWidth - 2.4,
+                x: contentX + contentWidth - 3.2,
                 y: y,
-                w: 2.4,
+                w: 3.2,
                 h: 0.7,
                 fontSize: 18,
                 fontFace: "Microsoft YaHei",
@@ -407,9 +407,9 @@ async function generateSplitLayout(
             });
             if (timeStr) {
               slide.addText(timeStr, {
-                x: contentX + contentWidth - 2.4,
+                x: contentX + contentWidth - 3.2,
                 y: y,
-                w: 2.4,
+                w: 3.2,
                 h: 0.7,
                 fontSize: 18,
                 fontFace: "Microsoft YaHei",
@@ -486,9 +486,9 @@ async function generateSplitLayout(
             }
             if (timeStr) {
               slide.addText(timeStr, {
-                x: contentX + contentWidth - 2.4,
+                x: contentX + contentWidth - 3.2,
                 y: y,
-                w: 2.4,
+                w: 3.2,
                 h: 0.7,
                 fontSize: 18,
                 fontFace: "Microsoft YaHei",
@@ -559,9 +559,9 @@ async function generateSplitLayout(
             });
             if (date) {
               slide.addText(date, {
-                x: contentX + contentWidth - 2.4,
+                x: contentX + contentWidth - 3.2,
                 y: y,
-                w: 2.4,
+                w: 3.2,
                 h: 0.6,
                 fontSize: 16,
                 fontFace: "Microsoft YaHei",
@@ -726,9 +726,9 @@ async function generateStackedLayout(
             }
             if (timeStr) {
               slide.addText(timeStr, {
-                x: margin + contentWidth - 2.4,
+                x: margin + contentWidth - 3.2,
                 y: y,
-                w: 2.4,
+                w: 3.2,
                 h: 0.7,
                 fontSize: 18,
                 fontFace: "Microsoft YaHei",
@@ -792,9 +792,9 @@ async function generateStackedLayout(
             }
             if (timeStr) {
               slide.addText(timeStr, {
-                x: margin + contentWidth - 2.4,
+                x: margin + contentWidth - 3.2,
                 y: y,
-                w: 2.4,
+                w: 3.2,
                 h: 0.7,
                 fontSize: 18,
                 fontFace: "Microsoft YaHei",
@@ -858,9 +858,9 @@ async function generateStackedLayout(
             }
             if (timeStr) {
               slide.addText(timeStr, {
-                x: margin + contentWidth - 2.4,
+                x: margin + contentWidth - 3.2,
                 y: y,
-                w: 2.4,
+                w: 3.2,
                 h: 0.7,
                 fontSize: 18,
                 fontFace: "Microsoft YaHei",
@@ -930,9 +930,9 @@ async function generateStackedLayout(
             });
             if (timeStr) {
               slide.addText(timeStr, {
-                x: margin + contentWidth - 2.4,
+                x: margin + contentWidth - 3.2,
                 y: y,
-                w: 2.4,
+                w: 3.2,
                 h: 0.7,
                 fontSize: 18,
                 fontFace: "Microsoft YaHei",
@@ -1009,9 +1009,9 @@ async function generateStackedLayout(
             }
             if (timeStr) {
               slide.addText(timeStr, {
-                x: margin + contentWidth - 2.4,
+                x: margin + contentWidth - 3.2,
                 y: y,
-                w: 2.4,
+                w: 3.2,
                 h: 0.7,
                 fontSize: 18,
                 fontFace: "Microsoft YaHei",
@@ -1082,9 +1082,9 @@ async function generateStackedLayout(
             });
             if (date) {
               slide.addText(date, {
-                x: margin + contentWidth - 2.4,
+                x: margin + contentWidth - 3.2,
                 y: y,
-                w: 2.4,
+                w: 3.2,
                 h: 0.6,
                 fontSize: 16,
                 fontFace: "Microsoft YaHei",
