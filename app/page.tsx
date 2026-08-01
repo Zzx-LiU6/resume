@@ -73,6 +73,18 @@ export default function Page() {
     return false
   }
 
+  // 导出 PDF
+  const handleExportPDF = () => {
+    window.print()
+  }
+
+  // 导出 PPT
+  const handleExportPPT = () => {
+    import("@/lib/export-ppt").then(({ exportToPPT }) => {
+      exportToPPT()
+    })
+  }
+
   const rewriteWork = async () => {
     console.log("1. 按钮被点击了！")
     setIsRewritingWork(true)
@@ -179,7 +191,8 @@ export default function Page() {
         onLangChange={setLang}
         fontScale={fontScale}
         onFontScaleChange={setFontScale}
-        onExport={() => window.print()}
+        onExportPDF={handleExportPDF}
+        onExportPPT={handleExportPPT}
         onRewriteWork={rewriteWork}
         isRewritingWork={isRewritingWork}
         workRewritten={workRewritten}
