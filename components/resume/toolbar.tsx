@@ -133,29 +133,30 @@ export function Toolbar({
             </button>
 
             {exportOpen && (
-              <div className="absolute right-0 top-full mt-1 w-48 rounded-md border border-border bg-background shadow-lg z-50">
+              <div className="absolute right-0 top-full mt-1 w-56 rounded-md border border-border bg-background shadow-lg z-50">
                 <button
                   type="button"
-                  onClick={() => {
-                    onExportPDF()
-                    setExportOpen(false)
-                  }}
-                  className="flex w-full items-center gap-2 px-4 py-2 text-sm text-foreground hover:bg-muted transition-colors"
+                  onClick={() => { onExportPDF(); setExportOpen(false); }}
+                  className="flex w-full items-center gap-2 px-4 py-2.5 text-sm text-foreground hover:bg-muted transition-colors"
                 >
                   <FileText className="h-4 w-4" />
                   <span>导出为 PDF</span>
+                  <span className="ml-auto text-xs text-muted-foreground">推荐</span>
                 </button>
                 <button
                   type="button"
-                  onClick={() => {
-                    onExportPPT()
-                    setExportOpen(false)
-                  }}
-                  className="flex w-full items-center gap-2 px-4 py-2 text-sm text-foreground hover:bg-muted transition-colors border-t border-border"
+                  onClick={() => { onExportPPT(); setExportOpen(false); }}
+                  className="flex w-full items-center gap-2 px-4 py-2.5 text-sm text-foreground hover:bg-muted transition-colors border-t border-border"
                 >
                   <FileType className="h-4 w-4" />
-                  <span>导出为 PPT（可编辑）</span>
+                  <span>导出为 PPT</span>
+                  <span className="ml-auto text-xs text-amber-500">⚠️ 实验性</span>
                 </button>
+                <div className="border-t border-border px-4 py-2">
+                  <p className="text-xs text-muted-foreground">
+                    💡 PPT 导出为实验功能，排版可能和预览略有差异，建议优先使用 PDF。
+                  </p>
+                </div>
               </div>
             )}
           </div>
