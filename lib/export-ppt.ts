@@ -123,7 +123,7 @@ async function generateSplitLayout(
     sideY += 1.1;
   }
 
-  // ===== 侧边栏：联系方式 =====
+  // ===== 侧边栏：联系方式（字体 20pt） =====
   const contactItems = [
     { icon: "📞", text: p.phone },
     { icon: "✉️", text: p.email },
@@ -139,7 +139,7 @@ async function generateSplitLayout(
         y: sideY,
         w: sidebarWidth - 0.6,
         h: 0.7,
-        fontSize: 18,
+        fontSize: 20,  // ← 改为 20pt
         fontFace: "Microsoft YaHei",
         color: colors.subtle,
         align: "center",
@@ -172,7 +172,8 @@ async function generateSplitLayout(
             const org = safeText(job.org);
             if (!org) continue;
             const role = safeText(job.role);
-            const header = role ? `${org} · ${role}` : org;
+            const time = (job.start || job.end) ? `  ${job.start || ''} - ${job.end || ''}` : '';
+            const header = role ? `${org} · ${role}${time}` : `${org}${time}`;
             slide.addText(header, {
               x: contentX + 0.2,
               y: y,
@@ -211,7 +212,8 @@ async function generateSplitLayout(
             const org = safeText(job.org);
             if (!org) continue;
             const role = safeText(job.role);
-            const header = role ? `${org} · ${role}` : org;
+            const time = (job.start || job.end) ? `  ${job.start || ''} - ${job.end || ''}` : '';
+            const header = role ? `${org} · ${role}${time}` : `${org}${time}`;
             slide.addText(header, {
               x: contentX + 0.2,
               y: y,
@@ -250,7 +252,8 @@ async function generateSplitLayout(
             const name = safeText(proj.name);
             if (!name) continue;
             const role = safeText(proj.role);
-            const header = role ? `${name} · ${role}` : name;
+            const time = (proj.start || proj.end) ? `  ${proj.start || ''} - ${proj.end || ''}` : '';
+            const header = role ? `${name} · ${role}${time}` : `${name}${time}`;
             slide.addText(header, {
               x: contentX + 0.2,
               y: y,
@@ -276,6 +279,19 @@ async function generateSplitLayout(
               });
               y += 0.6;
             }
+            if (proj.skills) {
+              slide.addText(`技术栈：${proj.skills}`, {
+                x: contentX + 0.7,
+                y: y,
+                w: contentWidth - 1.0,
+                h: 0.6,
+                fontSize: 16,
+                fontFace: "Microsoft YaHei",
+                color: colors.subtle,
+                valign: "top",
+              });
+              y += 0.6;
+            }
             y += 0.3;
           }
         }
@@ -290,9 +306,11 @@ async function generateSplitLayout(
             if (!school) continue;
             const major = safeText(edu.major);
             const degree = safeText(edu.degree);
+            const time = (edu.start || edu.end) ? `  ${edu.start || ''} - ${edu.end || ''}` : '';
             let header = school;
             if (major) header += ` · ${major}`;
             if (degree) header += ` · ${degree}`;
+            header += time;
             slide.addText(header, {
               x: contentX + 0.2,
               y: y,
@@ -304,6 +322,33 @@ async function generateSplitLayout(
               bold: true,
             });
             y += 0.7;
+            if (edu.gpa) {
+              slide.addText(`GPA：${edu.gpa}`, {
+                x: contentX + 0.5,
+                y: y,
+                w: contentWidth - 0.7,
+                h: 0.5,
+                fontSize: 16,
+                fontFace: "Microsoft YaHei",
+                color: colors.subtle,
+                valign: "top",
+              });
+              y += 0.5;
+            }
+            if (edu.courses) {
+              slide.addText(`主修课程：${edu.courses}`, {
+                x: contentX + 0.5,
+                y: y,
+                w: contentWidth - 0.7,
+                h: 0.5,
+                fontSize: 16,
+                fontFace: "Microsoft YaHei",
+                color: colors.subtle,
+                valign: "top",
+              });
+              y += 0.5;
+            }
+            y += 0.2;
           }
           y += 0.3;
         }
@@ -336,7 +381,10 @@ async function generateSplitLayout(
             const name = safeText(award.name);
             if (!name) continue;
             const issuer = safeText(award.issuer);
-            const text = issuer ? `${name} · ${issuer}` : name;
+            const date = safeText(award.date);
+            let text = name;
+            if (issuer) text += ` · ${issuer}`;
+            if (date) text += `  ${date}`;
             slide.addText(text, {
               x: contentX + 0.2,
               y: y,
@@ -368,7 +416,7 @@ async function generateSplitLayout(
 }
 
 // ============================================================
-// 单栏布局
+// 单栏布局（逻辑与分栏一致，仅位置参数不同）
 // ============================================================
 async function generateStackedLayout(
   pptx: PptxGenJS,
@@ -455,7 +503,7 @@ async function generateStackedLayout(
   });
   y += 0.7;
 
-  // ===== 内容区 =====
+  // ===== 内容区（与分栏逻辑完全相同，只是 x 坐标用 margin） =====
   for (const sec of sections) {
     const type = sec.type;
     switch (type) {
@@ -477,7 +525,8 @@ async function generateStackedLayout(
             const org = safeText(job.org);
             if (!org) continue;
             const role = safeText(job.role);
-            const header = role ? `${org} · ${role}` : org;
+            const time = (job.start || job.end) ? `  ${job.start || ''} - ${job.end || ''}` : '';
+            const header = role ? `${org} · ${role}${time}` : `${org}${time}`;
             slide.addText(header, {
               x: margin + 0.2,
               y: y,
@@ -516,7 +565,8 @@ async function generateStackedLayout(
             const org = safeText(job.org);
             if (!org) continue;
             const role = safeText(job.role);
-            const header = role ? `${org} · ${role}` : org;
+            const time = (job.start || job.end) ? `  ${job.start || ''} - ${job.end || ''}` : '';
+            const header = role ? `${org} · ${role}${time}` : `${org}${time}`;
             slide.addText(header, {
               x: margin + 0.2,
               y: y,
@@ -555,7 +605,8 @@ async function generateStackedLayout(
             const name = safeText(proj.name);
             if (!name) continue;
             const role = safeText(proj.role);
-            const header = role ? `${name} · ${role}` : name;
+            const time = (proj.start || proj.end) ? `  ${proj.start || ''} - ${proj.end || ''}` : '';
+            const header = role ? `${name} · ${role}${time}` : `${name}${time}`;
             slide.addText(header, {
               x: margin + 0.2,
               y: y,
@@ -581,6 +632,19 @@ async function generateStackedLayout(
               });
               y += 0.6;
             }
+            if (proj.skills) {
+              slide.addText(`技术栈：${proj.skills}`, {
+                x: margin + 0.7,
+                y: y,
+                w: contentWidth - 1.0,
+                h: 0.6,
+                fontSize: 16,
+                fontFace: "Microsoft YaHei",
+                color: colors.subtle,
+                valign: "top",
+              });
+              y += 0.6;
+            }
             y += 0.3;
           }
         }
@@ -595,9 +659,11 @@ async function generateStackedLayout(
             if (!school) continue;
             const major = safeText(edu.major);
             const degree = safeText(edu.degree);
+            const time = (edu.start || edu.end) ? `  ${edu.start || ''} - ${edu.end || ''}` : '';
             let header = school;
             if (major) header += ` · ${major}`;
             if (degree) header += ` · ${degree}`;
+            header += time;
             slide.addText(header, {
               x: margin + 0.2,
               y: y,
@@ -609,6 +675,33 @@ async function generateStackedLayout(
               bold: true,
             });
             y += 0.7;
+            if (edu.gpa) {
+              slide.addText(`GPA：${edu.gpa}`, {
+                x: margin + 0.5,
+                y: y,
+                w: contentWidth - 0.7,
+                h: 0.5,
+                fontSize: 16,
+                fontFace: "Microsoft YaHei",
+                color: colors.subtle,
+                valign: "top",
+              });
+              y += 0.5;
+            }
+            if (edu.courses) {
+              slide.addText(`主修课程：${edu.courses}`, {
+                x: margin + 0.5,
+                y: y,
+                w: contentWidth - 0.7,
+                h: 0.5,
+                fontSize: 16,
+                fontFace: "Microsoft YaHei",
+                color: colors.subtle,
+                valign: "top",
+              });
+              y += 0.5;
+            }
+            y += 0.2;
           }
           y += 0.3;
         }
@@ -641,7 +734,10 @@ async function generateStackedLayout(
             const name = safeText(award.name);
             if (!name) continue;
             const issuer = safeText(award.issuer);
-            const text = issuer ? `${name} · ${issuer}` : name;
+            const date = safeText(award.date);
+            let text = name;
+            if (issuer) text += ` · ${issuer}`;
+            if (date) text += `  ${date}`;
             slide.addText(text, {
               x: margin + 0.2,
               y: y,
