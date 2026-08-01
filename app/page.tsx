@@ -224,10 +224,10 @@ export default function Page() {
         </div>
       </div>
 
-      <main className="...">
-        {/* 编辑区 — 完全不变 */}
+      <main className="mx-auto flex max-w-[1600px] flex-col gap-6 p-4 sm:p-6 lg:flex-row">
+        {/* 编辑区 */}
         <section className="no-print w-full min-w-0 lg:w-[440px] lg:shrink-0">
-          <div className="...">
+          <div className="lg:sticky lg:top-20 lg:max-h-[calc(100vh-6rem)] lg:overflow-y-auto lg:pr-2">
             <EditPanel
               data={data}
               setData={setData}
@@ -241,7 +241,7 @@ export default function Page() {
           </div>
         </section>
 
-        {/* 预览区 — 去掉 PreviewFrame，直接使用 ResumePreview */}
+        {/* 预览区 */}
         <section className="print-region w-full overflow-x-auto">
           <div className="mx-auto" style={{ width: '794px' }}>
             <ResumePreview
