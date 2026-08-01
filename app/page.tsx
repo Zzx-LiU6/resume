@@ -81,7 +81,7 @@ export default function Page() {
   // 导出 PPT
   const handleExportPPT = () => {
     import("@/lib/export-ppt").then(({ exportToPPT }) => {
-      exportToPPT(data, theme,layout);
+      exportToPPT(data, theme, layout);
     });
   };
 
