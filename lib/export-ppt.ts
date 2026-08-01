@@ -173,8 +173,8 @@ async function generateSplitLayout(
             const org = safeText(job.org);
             if (!org) continue;
             const role = safeText(job.role);
-            const start = safeText(job.start);
-            const end = job.untilNow ? "至今" : safeText(job.end);
+            const start = safeText(job.start).replace("-", ".");
+            const end = job.untilNow ? "至今" : safeText(job.end).replace("-", ".");
             const timeStr = (start || end) ? `${start || ""} - ${end || ""}` : "";
 
             // 公司名（黑色，加粗）
@@ -242,8 +242,8 @@ async function generateSplitLayout(
             const org = safeText(job.org);
             if (!org) continue;
             const role = safeText(job.role);
-            const start = safeText(job.start);
-            const end = job.untilNow ? "至今" : safeText(job.end);
+            const start = safeText(job.start).replace("-", ".");
+            const end = job.untilNow ? "至今" : safeText(job.end).replace("-", ".");
             const timeStr = (start || end) ? `${start || ""} - ${end || ""}` : "";
 
             slide.addText(org, {
@@ -308,8 +308,8 @@ async function generateSplitLayout(
             const name = safeText(proj.name);
             if (!name) continue;
             const role = safeText(proj.role);
-            const start = safeText(proj.start);
-            const end = proj.untilNow ? "至今" : safeText(proj.end);
+            const start = safeText(proj.start).replace("-", ".");
+            const end = proj.untilNow ? "至今" : safeText(proj.end).replace("-", ".");
             const timeStr = (start || end) ? `${start || ""} - ${end || ""}` : "";
 
             slide.addText(name, {
@@ -388,8 +388,8 @@ async function generateSplitLayout(
             if (!school) continue;
             const major = safeText(edu.major);
             const degree = safeText(edu.degree);
-            const start = safeText(edu.start);
-            const end = edu.untilNow ? "至今" : safeText(edu.end);
+            const start = safeText(edu.start).replace("-", ".");
+            const end = edu.untilNow ? "至今" : safeText(edu.end).replace("-", ".");
             const timeStr = (start || end) ? `${start || ""} - ${end || ""}` : "";
 
             let schoolText = school;
@@ -459,8 +459,8 @@ async function generateSplitLayout(
             const org = safeText(item.org);
             if (!org) continue;
             const role = safeText(item.role);
-            const start = safeText(item.start);
-            const end = item.untilNow ? "至今" : safeText(item.end);
+            const start = safeText(item.start).replace("-", ".");
+            const end = item.untilNow ? "至今" : safeText(item.end).replace("-", ".");
             const timeStr = (start || end) ? `${start || ""} - ${end || ""}` : "";
 
             slide.addText(org, {
@@ -699,8 +699,8 @@ async function generateStackedLayout(
             const org = safeText(job.org);
             if (!org) continue;
             const role = safeText(job.role);
-            const start = safeText(job.start);
-            const end = job.untilNow ? "至今" : safeText(job.end);
+            const start = safeText(job.start).replace("-", ".");
+            const end = job.untilNow ? "至今" : safeText(job.end).replace("-", ".");
             const timeStr = (start || end) ? `${start || ""} - ${end || ""}` : "";
 
             slide.addText(org, {
@@ -765,8 +765,8 @@ async function generateStackedLayout(
             const org = safeText(job.org);
             if (!org) continue;
             const role = safeText(job.role);
-            const start = safeText(job.start);
-            const end = job.untilNow ? "至今" : safeText(job.end);
+            const start = safeText(job.start).replace("-", ".");
+            const end = job.untilNow ? "至今" : safeText(job.end).replace("-", ".");
             const timeStr = (start || end) ? `${start || ""} - ${end || ""}` : "";
 
             slide.addText(org, {
@@ -831,8 +831,8 @@ async function generateStackedLayout(
             const name = safeText(proj.name);
             if (!name) continue;
             const role = safeText(proj.role);
-            const start = safeText(proj.start);
-            const end = proj.untilNow ? "至今" : safeText(proj.end);
+            const start = safeText(proj.start).replace("-", ".");
+            const end = proj.untilNow ? "至今" : safeText(proj.end).replace("-", ".");
             const timeStr = (start || end) ? `${start || ""} - ${end || ""}` : "";
 
             slide.addText(name, {
@@ -911,8 +911,8 @@ async function generateStackedLayout(
             if (!school) continue;
             const major = safeText(edu.major);
             const degree = safeText(edu.degree);
-            const start = safeText(edu.start);
-            const end = edu.untilNow ? "至今" : safeText(edu.end);
+            const start = safeText(edu.start).replace("-", ".");
+            const end = edu.untilNow ? "至今" : safeText(edu.end).replace("-", ".");
             const timeStr = (start || end) ? `${start || ""} - ${end || ""}` : "";
 
             let schoolText = school;
@@ -982,8 +982,8 @@ async function generateStackedLayout(
             const org = safeText(item.org);
             if (!org) continue;
             const role = safeText(item.role);
-            const start = safeText(item.start);
-            const end = item.untilNow ? "至今" : safeText(item.end);
+            const start = safeText(item.start).replace("-", ".");
+            const end = item.untilNow ? "至今" : safeText(item.end).replace("-", ".");
             const timeStr = (start || end) ? `${start || ""} - ${end || ""}` : "";
 
             slide.addText(org, {
