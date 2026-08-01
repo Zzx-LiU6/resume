@@ -18,7 +18,7 @@ export async function exportToPPT() {
     previewElement.style.width = "100%";
     previewElement.style.transform = "none";
 
-    await downloadHtmlToPpt(".resume-preview", "我的简历");
+    await downloadHtmlToPpt("resume-preview", "我的简历");
 
     // 恢复原样
     previewElement.style.width = originalStyles.width;
