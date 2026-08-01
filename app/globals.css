@@ -222,3 +222,8 @@
     page-break-inside: avoid;
   }
 }
+@media print {
+  .jd-input-container {
+    display: none !important;
+  }
+}
