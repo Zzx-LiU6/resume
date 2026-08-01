@@ -226,17 +226,16 @@ export default function Page() {
 
       <main className="mx-auto flex max-w-[1600px] flex-col gap-6 p-4 sm:p-6 lg:flex-row">
         {/* 编辑区 */}
-        <section className="no-print w-full min-w-0 lg:w-[440px] lg:shrink-0">
-          <div className="lg:sticky lg:top-20 lg:max-h-[calc(100vh-6rem)] lg:overflow-y-auto lg:pr-2">
-            <EditPanel
+        <section className="print-region flex-1 w-full overflow-x-auto">
+          <div className="w-full">
+            <ResumePreview
               data={data}
-              setData={setData}
+              theme={theme}
               sections={sections}
               lang={lang}
+              layout={layout}
+              fontScale={fontScale}
               showPhoto={showPhoto}
-              onTogglePhoto={setShowPhoto}
-              onReorder={reorder}
-              onToggle={toggle}
             />
           </div>
         </section>
