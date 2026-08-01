@@ -1,6 +1,7 @@
 "use client"
 
-import { Columns2, Download, FileText, Languages, LoaderCircle, Rows2, Sparkles, Type, RotateCcw } from "lucide-react"
+import { useState } from "react"
+import { ChevronDown, Columns2, Download, FileText, FileType, Languages, LoaderCircle, Rows2, Sparkles, Type, RotateCcw } from "lucide-react"
 import { type Lang, type ResumeTheme, type ThemeId, THEMES } from "@/lib/resume-types"
 import { cn } from "@/lib/utils"
 
@@ -15,12 +16,13 @@ export function Toolbar({
   onLangChange,
   fontScale,
   onFontScaleChange,
-  onExport,
+  onExportPDF,
+  onExportPPT,
   onRewriteWork,
   isRewritingWork,
   workRewritten,
-  onRestoreOriginal,   // 👈 新增
-  progressText,        // 👈 新增
+  onRestoreOriginal,
+  progressText,
 }: {
   layout: LayoutMode
   onLayoutChange: (l: LayoutMode) => void
@@ -30,16 +32,20 @@ export function Toolbar({
   onLangChange: (l: Lang) => void
   fontScale: number
   onFontScaleChange: (v: number) => void
-  onExport: () => void
+  onExportPDF: () => void
+  onExportPPT: () => void
   onRewriteWork: () => void
   isRewritingWork: boolean
   workRewritten: boolean
-  onRestoreOriginal: () => void   // 👈 新增
-  progressText: string            // 👈 新增
+  onRestoreOriginal: () => void
+  progressText: string
 }) {
+  const [exportOpen, setExportOpen] = useState(false)
+
   return (
     <header className="no-print sticky top-0 z-30 border-b border-border bg-background/80 backdrop-blur-md">
       <div className="mx-auto flex max-w-[1600px] flex-wrap items-center gap-x-4 gap-y-3 px-4 py-3 sm:px-6">
+        {/* Logo */}
         <div className="flex items-center gap-2">
           <div className="flex h-8 w-8 items-center justify-center rounded-md bg-primary text-primary-foreground">
             <FileText className="h-4 w-4" />
@@ -89,56 +95,77 @@ export function Toolbar({
           {/* 主题切换 */}
           <ThemeSwitcher themeId={themeId} onThemeChange={onThemeChange} />
 
-          {/* 👇 恢复原文按钮 */}
+          {/* 恢复原文按钮 */}
           {workRewritten && (
             <button
               type="button"
               onClick={onRestoreOriginal}
               className="flex items-center gap-1.5 rounded-md border border-border px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-              title="恢复到润色前的版本"
             >
               <RotateCcw className="h-4 w-4" />
               <span className="hidden sm:inline">恢复原文</span>
             </button>
           )}
 
-          {/* 👇 润色按钮（带进度文字） */}
+          {/* 润色按钮 */}
           <button
             type="button"
             onClick={onRewriteWork}
             disabled={isRewritingWork}
-            aria-busy={isRewritingWork}
             className="flex items-center gap-1.5 rounded-md border border-border px-3 py-2 text-sm font-medium transition-colors hover:bg-muted disabled:cursor-not-allowed disabled:opacity-60"
           >
-            {isRewritingWork ? (
-              <LoaderCircle className="h-4 w-4 animate-spin" />
-            ) : (
-              <Sparkles className="h-4 w-4" />
-            )}
+            {isRewritingWork ? <LoaderCircle className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
             <span>
-              {isRewritingWork
-                ? progressText || "润色中..."
-                : workRewritten
-                ? "✅ 已润色"
-                : "AI一键润色"}
+              {isRewritingWork ? progressText || "润色中..." : workRewritten ? "✅ 已润色" : "AI一键润色"}
             </span>
           </button>
 
-          {/* 导出 PDF */}
-          <button
-            type="button"
-            onClick={onExport}
-            className="flex items-center gap-1.5 rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground shadow-sm transition-opacity hover:opacity-90"
-          >
-            <Download className="h-4 w-4" />
-            <span className="hidden sm:inline">导出 PDF</span>
-          </button>
+          {/* 导出下拉菜单 */}
+          <div className="relative">
+            <button
+              type="button"
+              onClick={() => setExportOpen(!exportOpen)}
+              className="flex items-center gap-1.5 rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground shadow-sm transition-opacity hover:opacity-90"
+            >
+              <Download className="h-4 w-4" />
+              <span className="hidden sm:inline">导出</span>
+              <ChevronDown className={cn("h-4 w-4 transition-transform", exportOpen && "rotate-180")} />
+            </button>
+
+            {exportOpen && (
+              <div className="absolute right-0 top-full mt-1 w-48 rounded-md border border-border bg-background shadow-lg z-50">
+                <button
+                  type="button"
+                  onClick={() => {
+                    onExportPDF()
+                    setExportOpen(false)
+                  }}
+                  className="flex w-full items-center gap-2 px-4 py-2 text-sm text-foreground hover:bg-muted transition-colors"
+                >
+                  <FileText className="h-4 w-4" />
+                  <span>导出为 PDF</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    onExportPPT()
+                    setExportOpen(false)
+                  }}
+                  className="flex w-full items-center gap-2 px-4 py-2 text-sm text-foreground hover:bg-muted transition-colors border-t border-border"
+                >
+                  <FileType className="h-4 w-4" />
+                  <span>导出为 PPT（可编辑）</span>
+                </button>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </header>
   )
 }
 
+// ===== ToggleBtn 组件 =====
 function ToggleBtn({
   active,
   onClick,
@@ -168,6 +195,7 @@ function ToggleBtn({
   )
 }
 
+// ===== ThemeSwitcher 组件 =====
 function ThemeSwitcher({
   themeId,
   onThemeChange,
