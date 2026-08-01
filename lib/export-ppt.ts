@@ -1,7 +1,6 @@
 import PptxGenJS from "pptxgenjs";
 import type { ResumeData, ResumeTheme } from "@/lib/resume-types";
 
-// 将你的主题颜色映射到 PPT 可用的颜色格式
 function mapThemeToPPT(theme: ResumeTheme) {
   return {
     paper: theme.vars.paper.replace("#", ""),
@@ -26,7 +25,6 @@ export async function exportToPPT(
 
     const colors = mapThemeToPPT(theme);
 
-    // 根据布局选择不同的排版策略
     if (layout === "split") {
       await generateSplitLayout(pptx, data, colors);
     } else {
@@ -40,413 +38,374 @@ export async function exportToPPT(
   }
 }
 
-// 分栏布局
+// ============ 分栏布局 ============
 async function generateSplitLayout(pptx: PptxGenJS, data: ResumeData, colors: any) {
   const slide = pptx.addSlide();
   slide.background = { color: colors.paper };
 
   const margin = 1.2;
-  const pageWidth = 21;
-  const pageHeight = 29.7;
-  const sidebarWidth = 5.8;
-  const contentWidth = pageWidth - sidebarWidth - margin * 2;
+  const pageW = 21;
+  const pageH = 29.7;
+  const sidebarW = 5.8;
+  const contentX = margin + sidebarW + 0.8;
+  const contentW = pageW - contentX - margin;
 
-  let currentY = margin + 0.5;
-
-  // ---- 侧边栏（左栏）- 深色背景 ----
-  const p = data.personal;
-
-  // 侧边栏背景（模拟 split 布局的左侧深色区域）
+  // ---- 侧边栏背景 ----
   slide.addShape(pptx.ShapeType.rect, {
     x: margin,
     y: margin,
-    w: sidebarWidth,
-    h: pageHeight - margin * 2,
+    w: sidebarW,
+    h: pageH - margin * 2,
     fill: { color: colors.tagBg },
-    rectRadius: 0,
   });
 
-  // 侧边栏内容
-  let sidebarY = margin + 0.8;
-
-  // 姓名（在侧边栏中居中）
-  if (p.fullName) {
-    slide.addText(p.fullName, {
-      x: margin + 0.3,
-      y: sidebarY,
-      w: sidebarWidth - 0.6,
-      h: 1.0,
-      fontSize: 18,
-      fontFace: "Arial",
-      color: colors.ink,
-      bold: true,
-      align: "center",
-    });
-    sidebarY += 1.2;
-  }
-
-  // 求职意向（在侧边栏中）
-  if (p.jobIntention) {
-    slide.addText(p.jobIntention, {
-      x: margin + 0.3,
-      y: sidebarY,
-      w: sidebarWidth - 0.6,
-      h: 0.6,
-      fontSize: 11,
-      fontFace: "Arial",
-      color: colors.accent,
-      align: "center",
-    });
-    sidebarY += 0.8;
-  }
-
-  // 联系方式（在侧边栏中）
-  const contactParts = [];
-  if (p.phone) contactParts.push(`📱 ${p.phone}`);
-  if (p.email) contactParts.push(`✉️ ${p.email}`);
-  if (p.city) contactParts.push(`📍 ${p.city}`);
-  if (p.gender) contactParts.push(p.gender);
-
-  if (contactParts.length > 0) {
-    for (const part of contactParts) {
-      slide.addText(part, {
-        x: margin + 0.3,
-        y: sidebarY,
-        w: sidebarWidth - 0.6,
-        h: 0.4,
-        fontSize: 9,
-        fontFace: "Arial",
-        color: colors.subtle,
-        align: "center",
-      });
-      sidebarY += 0.45;
-    }
-    sidebarY += 0.3;
-  }
-
-  // ---- 右侧内容区 ----
-  let rightY = margin + 0.5;
-  const rightX = margin + sidebarWidth + 0.6;
-  const rightW = contentWidth - 0.6;
-
-  // 右侧内容逐项渲染（工作经历、项目等）
-  // 这里复用之前 generateSlides 中的内容逻辑
-  await renderContentArea(slide, data, rightX, rightY, rightW, colors);
-}
-
-// 单栏布局
-async function generateStackedLayout(pptx: PptxGenJS, data: ResumeData, colors: any) {
-  const slide = pptx.addSlide();
-  slide.background = { color: colors.paper };
-
-  const margin = 1.5;
-  const pageWidth = 21;
-  const pageHeight = 29.7;
-  const contentWidth = pageWidth - margin * 2;
-
-  let currentY = margin;
-
-  // ---- 顶部个人信息区 ----
+  // ---- 侧边栏内容 ----
+  let sy = margin + 1.0;
   const p = data.personal;
 
-  // 姓名
   if (p.fullName) {
     slide.addText(p.fullName, {
-      x: margin,
-      y: currentY,
-      w: contentWidth,
-      h: 0.8,
-      fontSize: 22,
+      x: margin + 0.2,
+      y: sy,
+      w: sidebarW - 0.4,
+      h: 1.2,
+      fontSize: 20,
       fontFace: "Arial",
       color: colors.ink,
       bold: true,
       align: "center",
     });
-    currentY += 1.0;
+    sy += 1.4;
   }
 
-  // 求职意向
   if (p.jobIntention) {
     slide.addText(p.jobIntention, {
-      x: margin,
-      y: currentY,
-      w: contentWidth,
-      h: 0.6,
-      fontSize: 12,
+      x: margin + 0.2,
+      y: sy,
+      w: sidebarW - 0.4,
+      h: 0.7,
+      fontSize: 13,
       fontFace: "Arial",
       color: colors.accent,
       align: "center",
     });
-    currentY += 0.8;
+    sy += 0.9;
   }
 
-  // 联系方式
-  const contactParts = [];
-  if (p.phone) contactParts.push(`📱 ${p.phone}`);
-  if (p.email) contactParts.push(`✉️ ${p.email}`);
-  if (p.city) contactParts.push(`📍 ${p.city}`);
+  const contacts = [];
+  if (p.phone) contacts.push(`📱 ${p.phone}`);
+  if (p.email) contacts.push(`✉️ ${p.email}`);
+  if (p.city) contacts.push(`📍 ${p.city}`);
+  if (p.gender) contacts.push(p.gender);
 
-  if (contactParts.length > 0) {
-    slide.addText(contactParts.join("  ·  "), {
-      x: margin,
-      y: currentY,
-      w: contentWidth,
+  for (const c of contacts) {
+    slide.addText(c, {
+      x: margin + 0.2,
+      y: sy,
+      w: sidebarW - 0.4,
       h: 0.5,
       fontSize: 10,
       fontFace: "Arial",
       color: colors.subtle,
       align: "center",
     });
-    currentY += 0.8;
+    sy += 0.55;
+  }
+
+  // ---- 右侧内容区 ----
+  let cy = margin + 0.5;
+
+  // 右侧标题（姓名再次出现，作为主标题）
+  if (p.fullName) {
+    slide.addText(p.fullName, {
+      x: contentX,
+      y: cy,
+      w: contentW,
+      h: 0.9,
+      fontSize: 24,
+      fontFace: "Arial",
+      color: colors.ink,
+      bold: true,
+    });
+    cy += 1.1;
+  }
+
+  if (p.jobIntention) {
+    slide.addText(p.jobIntention, {
+      x: contentX,
+      y: cy,
+      w: contentW,
+      h: 0.6,
+      fontSize: 14,
+      fontFace: "Arial",
+      color: colors.accent,
+    });
+    cy += 0.8;
   }
 
   // 分隔线
   slide.addShape(pptx.ShapeType.rect, {
-    x: margin + 2,
-    y: currentY,
-    w: contentWidth - 4,
-    h: 0.05,
+    x: contentX,
+    y: cy,
+    w: contentW,
+    h: 0.06,
     fill: { color: colors.line },
   });
-  currentY += 0.6;
+  cy += 0.5;
 
-  // ---- 内容区域 ----
-  await renderContentArea(slide, data, margin, currentY, contentWidth, colors);
+  // ---- 渲染内容模块 ----
+  cy = await renderModules(slide, data, contentX, cy, contentW, colors);
 }
 
-// 内容区域渲染（工作经历、项目、教育等）
-async function renderContentArea(
+// ============ 单栏布局 ============
+async function generateStackedLayout(pptx: PptxGenJS, data: ResumeData, colors: any) {
+  const slide = pptx.addSlide();
+  slide.background = { color: colors.paper };
+
+  const margin = 1.5;
+  const pageW = 21;
+  const contentW = pageW - margin * 2;
+  let y = margin;
+
+  const p = data.personal;
+
+  // 姓名
+  if (p.fullName) {
+    slide.addText(p.fullName, {
+      x: margin,
+      y: y,
+      w: contentW,
+      h: 1.0,
+      fontSize: 26,
+      fontFace: "Arial",
+      color: colors.ink,
+      bold: true,
+      align: "center",
+    });
+    y += 1.2;
+  }
+
+  if (p.jobIntention) {
+    slide.addText(p.jobIntention, {
+      x: margin,
+      y: y,
+      w: contentW,
+      h: 0.6,
+      fontSize: 14,
+      fontFace: "Arial",
+      color: colors.accent,
+      align: "center",
+    });
+    y += 0.8;
+  }
+
+  const contacts = [];
+  if (p.phone) contacts.push(`📱 ${p.phone}`);
+  if (p.email) contacts.push(`✉️ ${p.email}`);
+  if (p.city) contacts.push(`📍 ${p.city}`);
+
+  if (contacts.length > 0) {
+    slide.addText(contacts.join("  ·  "), {
+      x: margin,
+      y: y,
+      w: contentW,
+      h: 0.5,
+      fontSize: 11,
+      fontFace: "Arial",
+      color: colors.subtle,
+      align: "center",
+    });
+    y += 0.7;
+  }
+
+  // 分隔线
+  slide.addShape(pptx.ShapeType.rect, {
+    x: margin + 1,
+    y: y,
+    w: contentW - 2,
+    h: 0.06,
+    fill: { color: colors.line },
+  });
+  y += 0.6;
+
+  await renderModules(slide, data, margin, y, contentW, colors);
+}
+
+// ============ 通用模块渲染 ============
+async function renderModules(
   slide: any,
   data: ResumeData,
   x: number,
   y: number,
-  width: number,
+  w: number,
   colors: any
-) {
-  let currentY = y;
+): Promise<number> {
+  let cy = y;
 
-  // ---- 自我介绍 ----
-  if (data.intro?.trim()) {
-    slide.addText("自我介绍", {
+  // 模块标题 + 横线
+  function addSection(title: string) {
+    slide.addText(title, {
       x: x,
-      y: currentY,
-      w: width,
-      h: 0.6,
-      fontSize: 13,
+      y: cy,
+      w: w,
+      h: 0.7,
+      fontSize: 16,
       fontFace: "Arial",
       color: colors.accent,
       bold: true,
     });
-    currentY += 0.6;
+    cy += 0.7;
+    // 横线
+    slide.addShape(pptx.ShapeType.rect, {
+      x: x,
+      y: cy,
+      w: w * 0.3,
+      h: 0.05,
+      fill: { color: colors.accent },
+    });
+    cy += 0.4;
+  }
 
+  // ---- 自我介绍 ----
+  if (data.intro?.trim()) {
+    addSection("自我介绍");
     slide.addText(data.intro, {
       x: x + 0.2,
-      y: currentY,
-      w: width - 0.2,
-      h: 0.7,
-      fontSize: 10,
+      y: cy,
+      w: w - 0.2,
+      h: 0.8,
+      fontSize: 12,
       fontFace: "Arial",
       color: colors.ink,
       valign: "top",
     });
-    currentY += 0.9;
+    cy += 1.0;
   }
 
   // ---- 工作经历 ----
-  if (data.work && data.work.length > 0) {
-    const hasContent = data.work.some(job => job.org || job.bullets.some(b => b.trim()));
-    if (hasContent) {
-      slide.addText("工作经历", {
-        x: x,
-        y: currentY,
-        w: width,
+  if (data.work?.some(j => j.org)) {
+    addSection("工作经历");
+    for (const job of data.work) {
+      if (!job.org) continue;
+      const header = `${job.org}${job.role ? " · " + job.role : ""}`;
+      slide.addText(header, {
+        x: x + 0.2,
+        y: cy,
+        w: w - 0.2,
         h: 0.6,
-        fontSize: 13,
+        fontSize: 14,
         fontFace: "Arial",
-        color: colors.accent,
+        color: colors.ink,
         bold: true,
       });
-      currentY += 0.6;
+      cy += 0.6;
 
-      for (const job of data.work) {
-        if (!job.org) continue;
-        // 公司 + 职位（加粗）
-        const header = `${job.org}${job.role ? " · " + job.role : ""}`;
-        slide.addText(header, {
-          x: x + 0.2,
-          y: currentY,
-          w: width - 0.2,
+      const bullets = job.bullets.filter(b => b.trim());
+      for (const b of bullets) {
+        slide.addText(`• ${b}`, {
+          x: x + 0.6,
+          y: cy,
+          w: w - 0.6,
           h: 0.5,
-          fontSize: 11,
+          fontSize: 11.5,
           fontFace: "Arial",
           color: colors.ink,
-          bold: true,
+          valign: "top",
         });
-        currentY += 0.5;
-
-        const validBullets = job.bullets.filter(b => b.trim());
-        for (const bullet of validBullets) {
-          slide.addText(`• ${bullet}`, {
-            x: x + 0.6,
-            y: currentY,
-            w: width - 0.6,
-            h: 0.45,
-            fontSize: 9.5,
-            fontFace: "Arial",
-            color: colors.ink,
-            valign: "top",
-          });
-          currentY += 0.5;
-        }
-        currentY += 0.2;
+        cy += 0.55;
       }
+      cy += 0.2;
     }
   }
 
   // ---- 项目经历 ----
-  if (data.project && data.project.length > 0) {
-    const hasContent = data.project.some(p => p.name);
-    if (hasContent) {
-      slide.addText("项目经历", {
-        x: x,
-        y: currentY,
-        w: width,
+  if (data.project?.some(p => p.name)) {
+    addSection("项目经历");
+    for (const proj of data.project) {
+      if (!proj.name) continue;
+      const header = `${proj.name}${proj.role ? " · " + proj.role : ""}`;
+      slide.addText(header, {
+        x: x + 0.2,
+        y: cy,
+        w: w - 0.2,
         h: 0.6,
-        fontSize: 13,
+        fontSize: 14,
         fontFace: "Arial",
-        color: colors.accent,
+        color: colors.ink,
         bold: true,
       });
-      currentY += 0.6;
+      cy += 0.6;
 
-      for (const proj of data.project) {
-        if (!proj.name) continue;
-        const header = `${proj.name}${proj.role ? " · " + proj.role : ""}`;
-        slide.addText(header, {
-          x: x + 0.2,
-          y: currentY,
-          w: width - 0.2,
+      if (proj.intro) {
+        slide.addText(proj.intro, {
+          x: x + 0.6,
+          y: cy,
+          w: w - 0.6,
           h: 0.5,
-          fontSize: 11,
+          fontSize: 11.5,
           fontFace: "Arial",
           color: colors.ink,
-          bold: true,
         });
-        currentY += 0.5;
-
-        if (proj.intro) {
-          slide.addText(proj.intro, {
-            x: x + 0.6,
-            y: currentY,
-            w: width - 0.6,
-            h: 0.45,
-            fontSize: 9.5,
-            fontFace: "Arial",
-            color: colors.ink,
-          });
-          currentY += 0.5;
-        }
-        currentY += 0.2;
+        cy += 0.55;
       }
+      cy += 0.2;
     }
   }
 
   // ---- 教育背景 ----
-  if (data.education && data.education.length > 0) {
-    const hasContent = data.education.some(e => e.school);
-    if (hasContent) {
-      slide.addText("教育背景", {
-        x: x,
-        y: currentY,
-        w: width,
+  if (data.education?.some(e => e.school)) {
+    addSection("教育背景");
+    for (const edu of data.education) {
+      if (!edu.school) continue;
+      const header = `${edu.school}${edu.major ? " · " + edu.major : ""}${edu.degree ? " · " + edu.degree : ""}`;
+      slide.addText(header, {
+        x: x + 0.2,
+        y: cy,
+        w: w - 0.2,
         h: 0.6,
-        fontSize: 13,
+        fontSize: 14,
         fontFace: "Arial",
-        color: colors.accent,
+        color: colors.ink,
         bold: true,
       });
-      currentY += 0.6;
-
-      for (const edu of data.education) {
-        if (!edu.school) continue;
-        const header = `${edu.school}${edu.major ? " · " + edu.major : ""}${edu.degree ? " · " + edu.degree : ""}`;
-        slide.addText(header, {
-          x: x + 0.2,
-          y: currentY,
-          w: width - 0.2,
-          h: 0.5,
-          fontSize: 11,
-          fontFace: "Arial",
-          color: colors.ink,
-          bold: true,
-        });
-        currentY += 0.5;
-      }
-      currentY += 0.3;
+      cy += 0.6;
     }
+    cy += 0.2;
   }
 
   // ---- 专业技能 ----
-  if (data.skills && data.skills.length > 0) {
-    const validSkills = data.skills.filter(s => s.name);
-    if (validSkills.length > 0) {
-      slide.addText("专业技能", {
-        x: x,
-        y: currentY,
-        w: width,
+  if (data.skills?.some(s => s.name)) {
+    addSection("专业技能");
+    const names = data.skills.map(s => s.name).filter(Boolean);
+    if (names.length > 0) {
+      slide.addText(names.join("  ·  "), {
+        x: x + 0.2,
+        y: cy,
+        w: w - 0.2,
         h: 0.6,
-        fontSize: 13,
+        fontSize: 12,
         fontFace: "Arial",
-        color: colors.accent,
-        bold: true,
+        color: colors.ink,
       });
-      currentY += 0.6;
-
-      const skillNames = validSkills.map(s => s.name).filter(Boolean);
-      if (skillNames.length > 0) {
-        // 用标签样式展示（浅色背景）
-        const skillText = skillNames.join("  ");
-        slide.addText(skillText, {
-          x: x + 0.2,
-          y: currentY,
-          w: width - 0.2,
-          h: 0.5,
-          fontSize: 10,
-          fontFace: "Arial",
-          color: colors.tagInk,
-          fill: { color: colors.tagBg },
-          align: "center",
-          valign: "middle",
-        });
-        currentY += 0.7;
-      }
+      cy += 0.8;
     }
   }
 
   // ---- 自我评价 ----
   if (data.evaluation?.trim()) {
-    slide.addText("自我评价", {
-      x: x,
-      y: currentY,
-      w: width,
-      h: 0.6,
-      fontSize: 13,
-      fontFace: "Arial",
-      color: colors.accent,
-      bold: true,
-    });
-    currentY += 0.6;
-
+    addSection("自我评价");
     slide.addText(data.evaluation, {
       x: x + 0.2,
-      y: currentY,
-      w: width - 0.2,
-      h: 0.7,
-      fontSize: 10,
+      y: cy,
+      w: w - 0.2,
+      h: 0.8,
+      fontSize: 12,
       fontFace: "Arial",
       color: colors.ink,
       valign: "top",
     });
-    currentY += 0.9;
+    cy += 1.0;
   }
+
+  return cy;
 }
