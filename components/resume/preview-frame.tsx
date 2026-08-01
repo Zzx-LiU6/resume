@@ -16,13 +16,19 @@ export function PreviewFrame({ children }: { children: ReactNode }) {
     if (!container || !paper) return
 
     const containerWidth = container.clientWidth
-    // 手机端判定：宽度小于 640px
-    const isMobile = containerWidth < 640
-    // 目标宽度：手机端留 8px 边距，桌面端留 16px
-    const padding = isMobile ? 8 : 16
-    const availableWidth = Math.max(containerWidth - padding, 100)
-    // 计算缩放比例，最大不超过 1
-    const nextScale = Math.min(1, availableWidth / A4_WIDTH_PX)
+    // 如果容器宽度为 0 或小于 100，使用屏幕宽度
+    let availableWidth = containerWidth
+    if (availableWidth < 100) {
+      availableWidth = typeof window !== "undefined" ? window.innerWidth : 794
+    }
+
+    // 手机端判断：容器宽度小于 640px
+    const isMobile = availableWidth < 640
+    // 手机端留边距，桌面端不留
+    const padding = isMobile ? 12 : 0
+    const targetWidth = Math.max(availableWidth - padding, 100)
+    const nextScale = Math.min(1, targetWidth / A4_WIDTH_PX)
+
     setScale(nextScale)
     setHeight(paper.offsetHeight * nextScale)
   }, [])
@@ -45,7 +51,7 @@ export function PreviewFrame({ children }: { children: ReactNode }) {
         <div
           ref={paperRef}
           className="resume-scale mx-auto w-[794px] origin-top print:!w-full"
-          style={{ transform: `scale(${scale})` }}
+          style={{ transform: `scale(${scale})`, transformOrigin: "top center" }}
         >
           {children}
         </div>
