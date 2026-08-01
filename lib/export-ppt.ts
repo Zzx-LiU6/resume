@@ -74,10 +74,11 @@ async function generateSplitLayout(
   const margin = 1.2;
   const pageWidth = 21;
   const pageHeight = 29.7;
-  const sidebarWidth = 5.8;
+  const sidebarWidth = 6.0; // 稍微加宽侧边栏
   const contentX = margin + sidebarWidth + 0.6;
   const contentWidth = pageWidth - contentX - margin;
 
+  // 侧边栏背景
   slide.addShape(pptx.ShapeType.rect, {
     x: margin,
     y: margin,
@@ -89,20 +90,23 @@ async function generateSplitLayout(
   let sideY = margin + 0.8;
   const p = data.personal;
 
+  // ============================================================
+  // 侧边栏：字体全部放大 + 加粗
+  // ============================================================
   const name = safeText(p.fullName);
   if (name) {
     slide.addText(name, {
       x: margin + 0.3,
       y: sideY,
       w: sidebarWidth - 0.6,
-      h: 1.2,
-      fontSize: 24,
+      h: 1.4,
+      fontSize: 28, // 从 24 增大到 28
       fontFace: "Microsoft YaHei",
       color: colors.ink,
       bold: true,
       align: "center",
     });
-    sideY += 1.4;
+    sideY += 1.5;
   }
 
   const jobIntention = safeText(p.jobIntention);
@@ -111,14 +115,14 @@ async function generateSplitLayout(
       x: margin + 0.3,
       y: sideY,
       w: sidebarWidth - 0.6,
-      h: 0.7,
-      fontSize: 14,
+      h: 0.8,
+      fontSize: 18, // 从 14 增大到 18
       fontFace: "Microsoft YaHei",
       color: colors.accent,
       align: "center",
       bold: true,
     });
-    sideY += 0.8;
+    sideY += 1.0;
   }
 
   const contactItems = [
@@ -135,16 +139,20 @@ async function generateSplitLayout(
         x: margin + 0.3,
         y: sideY,
         w: sidebarWidth - 0.6,
-        h: 0.5,
-        fontSize: 11,
+        h: 0.6,
+        fontSize: 14, // 从 11 增大到 14
         fontFace: "Microsoft YaHei",
         color: colors.subtle,
         align: "center",
+        bold: true,
       });
-      sideY += 0.45;
+      sideY += 0.5;
     }
   }
 
+  // ============================================================
+  // 右侧内容（字体加粗 + 行距加大）
+  // ============================================================
   let y = margin + 0.3;
 
   for (const sec of sections) {
@@ -155,8 +163,8 @@ async function generateSplitLayout(
         if (text) {
           addSectionTitle(pptx, slide, "自我介绍", contentX, y, contentWidth, colors);
           y += 0.6;
-          addTextBlock(slide, text, contentX + 0.2, y, contentWidth - 0.4, 0.8, colors);
-          y += 0.9;
+          addTextBlock(slide, text, contentX + 0.2, y, contentWidth - 0.4, 0.9, colors);
+          y += 1.0;
         }
         break;
       }
@@ -186,12 +194,13 @@ async function generateSplitLayout(
                 x: contentX + 0.7,
                 y: y,
                 w: contentWidth - 1.0,
-                h: 0.45,
+                h: 0.5,
                 fontSize: 13,
                 fontFace: "Microsoft YaHei",
                 color: colors.ink,
+                bold: true,
                 valign: "top",
-                lineSpacing: 1.2,
+                lineSpacing: 1.8, // 从 1.2 增加到 1.8
               });
               y += 0.5;
             }
@@ -226,12 +235,13 @@ async function generateSplitLayout(
                 x: contentX + 0.7,
                 y: y,
                 w: contentWidth - 1.0,
-                h: 0.45,
+                h: 0.5,
                 fontSize: 13,
                 fontFace: "Microsoft YaHei",
                 color: colors.ink,
+                bold: true,
                 valign: "top",
-                lineSpacing: 1.2,
+                lineSpacing: 1.8,
               });
               y += 0.5;
             }
@@ -266,12 +276,13 @@ async function generateSplitLayout(
                 x: contentX + 0.7,
                 y: y,
                 w: contentWidth - 1.0,
-                h: 0.45,
+                h: 0.5,
                 fontSize: 13,
                 fontFace: "Microsoft YaHei",
                 color: colors.ink,
+                bold: true,
                 valign: "top",
-                lineSpacing: 1.2,
+                lineSpacing: 1.8,
               });
               y += 0.5;
             }
@@ -317,12 +328,12 @@ async function generateSplitLayout(
             x: contentX + 0.2,
             y: y,
             w: contentWidth - 0.4,
-            h: 0.5,
+            h: 0.6,
             fontSize: 13,
             fontFace: "Microsoft YaHei",
             color: colors.ink,
-            valign: "top",
             bold: true,
+            valign: "top",
           });
           y += 0.6;
         }
@@ -341,10 +352,11 @@ async function generateSplitLayout(
               x: contentX + 0.2,
               y: y,
               w: contentWidth - 0.4,
-              h: 0.45,
+              h: 0.5,
               fontSize: 13,
               fontFace: "Microsoft YaHei",
               color: colors.ink,
+              bold: true,
               valign: "top",
             });
             y += 0.5;
@@ -358,8 +370,8 @@ async function generateSplitLayout(
         if (text) {
           addSectionTitle(pptx, slide, "自我评价", contentX, y, contentWidth, colors);
           y += 0.6;
-          addTextBlock(slide, text, contentX + 0.2, y, contentWidth - 0.4, 0.8, colors);
-          y += 0.9;
+          addTextBlock(slide, text, contentX + 0.2, y, contentWidth - 0.4, 0.9, colors);
+          y += 1.0;
         }
         break;
       }
@@ -368,7 +380,7 @@ async function generateSplitLayout(
 }
 
 // ============================================================
-// 单栏布局（逻辑与分栏一致，仅位置参数不同）
+// 单栏布局（同步更新字体和行距）
 // ============================================================
 async function generateStackedLayout(
   pptx: PptxGenJS,
@@ -407,7 +419,7 @@ async function generateStackedLayout(
       y: y,
       w: contentWidth,
       h: 0.7,
-      fontSize: 15,
+      fontSize: 18,
       fontFace: "Microsoft YaHei",
       color: colors.accent,
       align: "center",
@@ -434,10 +446,11 @@ async function generateStackedLayout(
       y: y,
       w: contentWidth,
       h: 0.6,
-      fontSize: 12,
+      fontSize: 14,
       fontFace: "Microsoft YaHei",
       color: colors.subtle,
       align: "center",
+      bold: true,
     });
     y += 0.6;
   }
@@ -459,8 +472,8 @@ async function generateStackedLayout(
         if (text) {
           addSectionTitle(pptx, slide, "自我介绍", margin, y, contentWidth, colors);
           y += 0.6;
-          addTextBlock(slide, text, margin + 0.2, y, contentWidth - 0.4, 0.8, colors);
-          y += 0.9;
+          addTextBlock(slide, text, margin + 0.2, y, contentWidth - 0.4, 0.9, colors);
+          y += 1.0;
         }
         break;
       }
@@ -490,12 +503,13 @@ async function generateStackedLayout(
                 x: margin + 0.7,
                 y: y,
                 w: contentWidth - 1.0,
-                h: 0.45,
+                h: 0.5,
                 fontSize: 13,
                 fontFace: "Microsoft YaHei",
                 color: colors.ink,
+                bold: true,
                 valign: "top",
-                lineSpacing: 1.2,
+                lineSpacing: 1.8,
               });
               y += 0.5;
             }
@@ -530,12 +544,13 @@ async function generateStackedLayout(
                 x: margin + 0.7,
                 y: y,
                 w: contentWidth - 1.0,
-                h: 0.45,
+                h: 0.5,
                 fontSize: 13,
                 fontFace: "Microsoft YaHei",
                 color: colors.ink,
+                bold: true,
                 valign: "top",
-                lineSpacing: 1.2,
+                lineSpacing: 1.8,
               });
               y += 0.5;
             }
@@ -570,12 +585,13 @@ async function generateStackedLayout(
                 x: margin + 0.7,
                 y: y,
                 w: contentWidth - 1.0,
-                h: 0.45,
+                h: 0.5,
                 fontSize: 13,
                 fontFace: "Microsoft YaHei",
                 color: colors.ink,
+                bold: true,
                 valign: "top",
-                lineSpacing: 1.2,
+                lineSpacing: 1.8,
               });
               y += 0.5;
             }
@@ -621,12 +637,12 @@ async function generateStackedLayout(
             x: margin + 0.2,
             y: y,
             w: contentWidth - 0.4,
-            h: 0.5,
+            h: 0.6,
             fontSize: 13,
             fontFace: "Microsoft YaHei",
             color: colors.ink,
-            valign: "top",
             bold: true,
+            valign: "top",
           });
           y += 0.6;
         }
@@ -645,10 +661,11 @@ async function generateStackedLayout(
               x: margin + 0.2,
               y: y,
               w: contentWidth - 0.4,
-              h: 0.45,
+              h: 0.5,
               fontSize: 13,
               fontFace: "Microsoft YaHei",
               color: colors.ink,
+              bold: true,
               valign: "top",
             });
             y += 0.5;
@@ -662,8 +679,8 @@ async function generateStackedLayout(
         if (text) {
           addSectionTitle(pptx, slide, "自我评价", margin, y, contentWidth, colors);
           y += 0.6;
-          addTextBlock(slide, text, margin + 0.2, y, contentWidth - 0.4, 0.8, colors);
-          y += 0.9;
+          addTextBlock(slide, text, margin + 0.2, y, contentWidth - 0.4, 0.9, colors);
+          y += 1.0;
         }
         break;
       }
@@ -672,7 +689,7 @@ async function generateStackedLayout(
 }
 
 // ============================================================
-// 辅助函数（字体、大小、行距已优化）
+// 辅助函数
 // ============================================================
 function addSectionTitle(pptx: PptxGenJS, slide: any, title: string, x: number, y: number, width: number, colors: any) {
   slide.addText(title, {
@@ -703,7 +720,8 @@ function addTextBlock(slide: any, text: string, x: number, y: number, width: num
     fontSize: 14,
     fontFace: "Microsoft YaHei",
     color: colors.ink,
+    bold: true,
     valign: "top",
-    lineSpacing: 1.2,
+    lineSpacing: 1.8,
   });
 }
