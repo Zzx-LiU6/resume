@@ -241,8 +241,8 @@ export default function Page() {
           </div>
         </section>
 
-        {/* 预览区 — 手机端在下方，且可横向滚动查看完整内容 */}
-        <section className="print-region min-w-0 flex-1 w-full max-w-full overflow-x-auto">
+        {/* 预览区 — 手机端在下方，且完整显示 */}
+        <section className="print-region min-w-0 flex-1 w-full max-w-full overflow-hidden">
           <PreviewFrame>
             <ResumePreview
               data={data}
