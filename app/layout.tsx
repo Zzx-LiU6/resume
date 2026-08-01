@@ -13,12 +13,16 @@ export const metadata: Metadata = {
   description: '全功能自定义简历生成器：分栏 / 上下双布局、多主题配色、模块拖拽排序、A4 打印与 PDF 导出。',
   generator: 'v0.app',
   icons: {
-    icon: '/favicon.svg',          // 浏览器标签页图标
-    apple: '/favicon.svg',         // 苹果设备书签图标（可选）
+    icon: '/favicon.svg',
+    apple: '/favicon.svg',
   },
 }
 
 export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 5,
+  userScalable: true,
   colorScheme: 'light dark',
   themeColor: [
     { media: '(prefers-color-scheme: light)', color: 'white' },
