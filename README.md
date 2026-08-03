@@ -106,7 +106,3 @@ npm start
 ## 📄 License
 
 MIT
-
-- [六爻铜钱起卦工具](https://github.com/Zzx-LiU6/liuyao) — 铜钱摇卦，自动演算
-- [大六壬排盘工具](https://github.com/Zzx-LiU6/daliuren) — 天地盘、四课、三传
-- [个人作品集](https://github.com/Zzx-LiU6/Zzx-LiU6) — 所有项目汇总
